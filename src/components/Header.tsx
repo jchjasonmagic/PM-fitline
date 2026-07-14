@@ -14,7 +14,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigateTo }) => {
     { id: 'about', label: '认识PM', icon: BookOpen },
     { id: 'plan', label: '合作计划', icon: ShieldAlert },
     { id: 'simulator', label: '收入试算', icon: Calculator },
-    { id: 'contact', label: '联系我们', icon: MessageCircle },
+    { id: 'contact', label: '联系咨询', icon: MessageCircle },
   ];
 
   const handleNavClick = (pageId: string) => {

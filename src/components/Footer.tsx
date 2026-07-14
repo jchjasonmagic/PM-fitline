@@ -46,7 +46,7 @@ export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
               <button onClick={() => handlePageClick('simulator')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">收益试算</button>
               <button onClick={() => handlePageClick('faq')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">常见问题</button>
               <button onClick={() => handlePageClick('sources')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">资料来源</button>
-              <button onClick={() => handlePageClick('contact')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">联系我们</button>
+              <button onClick={() => handlePageClick('contact')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">联系咨询</button>
             </div>
           </div>
 
@@ -95,7 +95,7 @@ export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
               <ArrowUpRight className="h-3 w-3" />
             </button>
             <button onClick={() => handlePageClick('contact')} className="hover:text-white flex items-center space-x-1">
-              <span>联系我们</span>
+              <span>联系咨询</span>
               <ArrowUpRight className="h-3 w-3" />
             </button>
           </div>

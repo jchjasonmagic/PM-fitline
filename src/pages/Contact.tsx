@@ -11,7 +11,7 @@ export const Contact: React.FC = () => {
       
       {/* Page Header */}
       <div className="border-b border-gray-100 pb-6 text-center space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A]">联系我们</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A]">联系咨询</h1>
         <p className="text-sm text-gray-500 max-w-2xl mx-auto">
           如果您对本站整理的数据、模拟器的计算规则仍有不解，或是需要获取最新的产品外包装高清中文标签，可以通过下方方式联系。
         </p>
