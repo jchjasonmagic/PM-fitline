@@ -5,7 +5,9 @@ import { AdvancedCalculatorInput, MultiScenarioResults } from '../types';
 import { calculateMultiScenarios } from '../utils/calculator';
 
 const STORAGE_KEY = 'PM_TRANSPARENT_CALCULATOR_STATE';
-const STORAGE_VERSION = 3;
+const STORAGE_VERSION = 4;
+
+type PeopleMode = 'actual' | 'demo';
 
 export const Simulator: React.FC = () => {
   // 1. Interactive state modes
@@ -13,6 +15,7 @@ export const Simulator: React.FC = () => {
   const [showFormulaDetails, setShowFormulaDetails] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
   const [showCompliance, setShowCompliance] = useState<boolean>(false);
+  const [peopleMode, setPeopleMode] = useState<PeopleMode>('actual');
 
   // Default parameters from config
   const defPoints = pmConfig.validPointsPerPerson.value;
@@ -21,18 +24,30 @@ export const Simulator: React.FC = () => {
   const defPercentages = pmConfig.bonusPercentages.value;
 
   // 2. Form state inputs
-  const [gen1, setGen1] = useState<number>(5);
-  const [repRate1, setRepRate1] = useState<number>(0); // 1代人均推荐数
-  const [repRate2, setRepRate2] = useState<number>(0); // 2代人均推荐数
-  const [repRate3, setRepRate3] = useState<number>(0); // 3代人均推荐数
-  const [repRate4, setRepRate4] = useState<number>(0); // 4代人均推荐数
-  const [repRate5, setRepRate5] = useState<number>(0); // 5代人均推荐数
+  const [gen1, setGen1] = useState<number>(0);
+  const [gen2, setGen2] = useState<number>(0);
+  const [gen3, setGen3] = useState<number>(0);
+  const [gen4, setGen4] = useState<number>(0);
+  const [gen5, setGen5] = useState<number>(0);
+  const [gen6, setGen6] = useState<number>(0);
 
-  const gen2 = Math.round(gen1 * repRate1);
-  const gen3 = Math.round(gen2 * repRate2);
-  const gen4 = Math.round(gen3 * repRate3);
-  const gen5 = Math.round(gen4 * repRate4);
-  const gen6 = Math.round(gen5 * repRate5);
+  const [demoGen1, setDemoGen1] = useState<number>(5);
+  const [avgNew1, setAvgNew1] = useState<number>(2);
+  const [avgNew2, setAvgNew2] = useState<number>(2);
+  const [avgNew3, setAvgNew3] = useState<number>(1);
+  const [avgNew4, setAvgNew4] = useState<number>(0);
+  const [avgNew5, setAvgNew5] = useState<number>(0);
+
+  const demoGen2 = Math.round(demoGen1 * avgNew1);
+  const demoGen3 = Math.round(demoGen2 * avgNew2);
+  const demoGen4 = Math.round(demoGen3 * avgNew3);
+  const demoGen5 = Math.round(demoGen4 * avgNew4);
+  const demoGen6 = Math.round(demoGen5 * avgNew5);
+
+  const selectedGenerations =
+    peopleMode === 'actual'
+      ? [gen1, gen2, gen3, gen4, gen5, gen6]
+      : [demoGen1, demoGen2, demoGen3, demoGen4, demoGen5, demoGen6];
 
   const [avgPoints, setAvgPoints] = useState<number>(defPoints);
   const [rate, setRate] = useState<number>(defRate);
@@ -54,6 +69,21 @@ export const Simulator: React.FC = () => {
   const [taxRate, setTaxRate] = useState<number>(0.05); // 5%
   const [bonusCoeff, setBonusCoeff] = useState<number>(defCoeff);
 
+  const handlePeopleModeChange = (mode: PeopleMode) => {
+    setPeopleMode(mode);
+    if (mode === 'demo') {
+      const isEmpty = demoGen1 === 0 && avgNew1 === 0 && avgNew2 === 0 && avgNew3 === 0 && avgNew4 === 0 && avgNew5 === 0;
+      if (isEmpty) {
+        setDemoGen1(5);
+        setAvgNew1(2);
+        setAvgNew2(2);
+        setAvgNew3(1);
+        setAvgNew4(0);
+        setAvgNew5(0);
+      }
+    }
+  };
+
   // Load state from local storage on mount
   useEffect(() => {
     try {
@@ -61,19 +91,37 @@ export const Simulator: React.FC = () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         const storageVersion = parsed.version ?? 1;
-        const g1 = parsed.gen1 ?? 5;
-        const g2 = parsed.gen2 ?? 0;
-        const g3 = parsed.gen3 ?? 0;
-        const g4 = parsed.gen4 ?? 0;
-        const g5 = parsed.gen5 ?? 0;
-        const g6 = parsed.gen6 ?? 0;
+        if (storageVersion >= STORAGE_VERSION) {
+          setPeopleMode((parsed.peopleMode ?? 'actual') as PeopleMode);
+          setGen1(parsed.gen1 ?? 0);
+          setGen2(parsed.gen2 ?? 0);
+          setGen3(parsed.gen3 ?? 0);
+          setGen4(parsed.gen4 ?? 0);
+          setGen5(parsed.gen5 ?? 0);
+          setGen6(parsed.gen6 ?? 0);
 
-        setGen1(g1);
-        setRepRate1(Math.round(parsed.repRate1 ?? (g1 > 0 ? g2 / g1 : 0)));
-        setRepRate2(Math.round(parsed.repRate2 ?? (g2 > 0 ? g3 / g2 : 0)));
-        setRepRate3(Math.round(parsed.repRate3 ?? (g3 > 0 ? g4 / g3 : 0)));
-        setRepRate4(Math.round(parsed.repRate4 ?? (g4 > 0 ? g5 / g4 : 0)));
-        setRepRate5(Math.round(parsed.repRate5 ?? (g5 > 0 ? g6 / g5 : 0)));
+          setDemoGen1(Math.round(parsed.demoGen1 ?? 5));
+          setAvgNew1(Math.round(parsed.avgNew1 ?? 2));
+          setAvgNew2(Math.round(parsed.avgNew2 ?? 2));
+          setAvgNew3(Math.round(parsed.avgNew3 ?? 1));
+          setAvgNew4(Math.round(parsed.avgNew4 ?? 0));
+          setAvgNew5(Math.round(parsed.avgNew5 ?? 0));
+        } else {
+          setPeopleMode('actual');
+          setGen1(parsed.gen1 ?? 0);
+          setGen2(parsed.gen2 ?? 0);
+          setGen3(parsed.gen3 ?? 0);
+          setGen4(parsed.gen4 ?? 0);
+          setGen5(parsed.gen5 ?? 0);
+          setGen6(parsed.gen6 ?? 0);
+
+          setDemoGen1(5);
+          setAvgNew1(2);
+          setAvgNew2(2);
+          setAvgNew3(1);
+          setAvgNew4(0);
+          setAvgNew5(0);
+        }
         setAvgPoints(parsed.avgPoints ?? defPoints);
         setRate(parsed.rate ?? defRate);
         
@@ -102,8 +150,9 @@ export const Simulator: React.FC = () => {
   useEffect(() => {
     const stateToSave = {
       version: STORAGE_VERSION,
+      peopleMode,
       gen1, gen2, gen3, gen4, gen5, gen6,
-      repRate1, repRate2, repRate3, repRate4, repRate5,
+      demoGen1, avgNew1, avgNew2, avgNew3, avgNew4, avgNew5,
       avgPoints, rate, isAdvanced,
       activeRate1, activeRate2, activeRate3, activeRate4, activeRate5, activeRate6,
       monthlyGrowth, monthlyChurn, refundRate, personalCost, marketingCost, otherCost,
@@ -115,8 +164,9 @@ export const Simulator: React.FC = () => {
       console.error('Could not write to local storage', e);
     }
   }, [
+    peopleMode,
     gen1, gen2, gen3, gen4, gen5, gen6,
-    repRate1, repRate2, repRate3, repRate4, repRate5,
+    demoGen1, avgNew1, avgNew2, avgNew3, avgNew4, avgNew5,
     avgPoints, rate, isAdvanced,
     activeRate1, activeRate2, activeRate3, activeRate4, activeRate5, activeRate6,
     monthlyGrowth, monthlyChurn, refundRate, personalCost, marketingCost, otherCost,
@@ -125,12 +175,19 @@ export const Simulator: React.FC = () => {
 
   // Revert / Reset
   const handleReset = () => {
-    setGen1(5);
-    setRepRate1(0);
-    setRepRate2(0);
-    setRepRate3(0);
-    setRepRate4(0);
-    setRepRate5(0);
+    setPeopleMode('actual');
+    setGen1(0);
+    setGen2(0);
+    setGen3(0);
+    setGen4(0);
+    setGen5(0);
+    setGen6(0);
+    setDemoGen1(5);
+    setAvgNew1(2);
+    setAvgNew2(2);
+    setAvgNew3(1);
+    setAvgNew4(0);
+    setAvgNew5(0);
     setAvgPoints(defPoints);
     setRate(defRate);
     setActiveRate1(1.0);
@@ -151,7 +208,7 @@ export const Simulator: React.FC = () => {
 
   // Compile full input object
   const calcInput: AdvancedCalculatorInput = {
-    generations: [gen1, gen2, gen3, gen4, gen5, gen6],
+    generations: selectedGenerations,
     avgPointsPerPerson: avgPoints,
     exchangeRate: rate,
     activeRates: isAdvanced 
@@ -184,9 +241,12 @@ export const Simulator: React.FC = () => {
 
   // Copy results summary
   const handleCopySummary = () => {
+    const peopleSource = peopleMode === 'actual' ? '人数来源：用户填写的实际人数' : '人数来源：组织结构数学演示';
+    const fmtPeople = (n: number) => (Number.isInteger(n) ? n.toFixed(0) : n.toFixed(1));
     const text = `【PM健康与事业指南-收入情景模拟测算摘要】
 测算模式：${isAdvanced ? '高级真实经营模式' : '基础简易演示模式'}
-团队人数规划：1代 ${gen1}人 | 2代 ${gen2}人 | 3代 ${gen3}人 | 4代 ${gen4}人 | 5代 ${gen5}人 | 6代 ${gen6}人
+${peopleSource}
+团队人数规划：1代 ${fmtPeople(selectedGenerations[0])}人 | 2代 ${fmtPeople(selectedGenerations[1])}人 | 3代 ${fmtPeople(selectedGenerations[2])}人 | 4代 ${fmtPeople(selectedGenerations[3])}人 | 5代 ${fmtPeople(selectedGenerations[4])}人 | 6代 ${fmtPeople(selectedGenerations[5])}人
 平均月度有效积分：${avgPoints} 分 (默认 ${defPoints}分)
 结算汇率：${rate} (默认 ${defRate})
 活跃率系数：${isAdvanced ? `1代${(activeRate1*100).toFixed(0)}% / 2代${(activeRate2*100).toFixed(0)}% / 3代${(activeRate3*100).toFixed(0)}%` : '默认100%'}
@@ -228,27 +288,6 @@ export const Simulator: React.FC = () => {
         </p>
       </div>
 
-      <div className="bg-[#FFF4E5] border border-orange-200/50 rounded-xl p-4 sm:p-5 text-xs text-orange-950 flex items-start space-x-3">
-        <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5 text-orange-600" />
-        <div className="space-y-1">
-          <p className="font-bold">合规与审慎提示 (Crucial Compliance Statement)：</p>
-          <button
-            type="button"
-            onClick={() => setShowCompliance((v) => !v)}
-            className="inline-flex items-center text-left text-orange-900 underline underline-offset-2 hover:text-orange-950"
-            aria-expanded={showCompliance}
-            id="btn-toggle-compliance"
-          >
-            {showCompliance ? '收起合规声明与参数说明' : '点击查看合规声明与参数说明'}
-          </button>
-          {showCompliance && (
-            <p className="leading-relaxed text-orange-900">
-              {pmConfig.disclaimer.value} 此外，月度积分 {defPoints} 分、奖金系数 {defCoeff} 以及汇率 {defRate} 均属于<strong>“待官方资料进一步核实、确认的演示默认参数”</strong>，不得视作已经生效执行的官方数字，严禁用于向他人虚构、引诱高收入推广。
-            </p>
-          )}
-        </div>
-      </div>
-
       {/* 2. Main interactive container */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start" id="simulator-grid">
         
@@ -283,131 +322,265 @@ export const Simulator: React.FC = () => {
           </div>
 
           <div className="space-y-4" id="form-inputs">
-            {/* Generations Count (Gen 1 - Gen 6) */}
             <div className="space-y-4">
-              <label className="text-xs font-bold text-[#12304A] block uppercase tracking-wider">
-                步骤 1：规划您的六代推荐链条（裂变裂变倍增模型）
-              </label>
-
-              {/* Gen 1 */}
-              <div className="space-y-1 p-2 bg-[#1F5D7A]/5 rounded-lg border border-[#1F5D7A]/10">
-                <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
-                  <span className="font-semibold text-[#12304A]">第一代 (您直接推荐的)</span>
-                  <span className="font-bold text-[#1F5D7A]">{gen1} 人</span>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-[#12304A] block uppercase tracking-wider">
+                  步骤 1：{peopleMode === 'actual' ? '填写团队各代人数' : '组织结构演示'}
+                </label>
+                <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 overflow-hidden">
+                  <button
+                    type="button"
+                    id="btn-people-mode-actual"
+                    onClick={() => handlePeopleModeChange('actual')}
+                    className={`px-3 py-1.5 text-[11px] font-semibold transition-colors ${
+                      peopleMode === 'actual'
+                        ? 'bg-[#1F5D7A] text-white'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    按实际人数测算
+                  </button>
+                  <button
+                    type="button"
+                    id="btn-people-mode-demo"
+                    onClick={() => handlePeopleModeChange('demo')}
+                    className={`px-3 py-1.5 text-[11px] font-semibold transition-colors ${
+                      peopleMode === 'demo'
+                        ? 'bg-[#1F5D7A] text-white'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    组织结构演示
+                  </button>
                 </div>
-                <input
-                  type="range" min="0" max="50" step="1" value={gen1}
-                  onChange={(e) => setGen1(parseInt(e.target.value) || 0)}
-                  className="w-full h-1.5 bg-gray-100 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
-                  id="slider-gen1"
-                />
-                <span className="text-[10px] text-gray-400 block italic">您直接开出的核心直推人数</span>
               </div>
 
-              {/* Gen 2 */}
-              <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
-                <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
-                  <span className="font-medium">第二代 (1代成员推荐)</span>
-                  <span className="font-bold text-[#1F5D7A]">{gen2} 人</span>
-                </div>
-                <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
-                  <span>平均每位1代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate1.toFixed(0)} 人</span>
-                </div>
-                <input
-                  type="range" min="0" max="20" step="1" value={repRate1}
-                  onChange={(e) => setRepRate1(parseInt(e.target.value) || 0)}
-                  className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
-                  id="slider-repRate1"
-                />
-                <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：1代 ({gen1}人) × 裂变 ({repRate1.toFixed(0)}) = 约 {gen2}人
-                </span>
-              </div>
+              {peopleMode === 'actual' ? (
+                <>
+                  <p className="text-[10px] text-gray-500 leading-relaxed">
+                    请填写各代当前实际人数。实际产生奖金的人数还会受到活跃率和有效积分影响。
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-gray-400 block font-sans">第一代人数</span>
+                      <input
+                        id="input-gen1"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={gen1}
+                        onChange={(e) => setGen1(parseInt(e.target.value) || 0)}
+                        className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-gray-400 block font-sans">第二代人数</span>
+                      <input
+                        id="input-gen2"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={gen2}
+                        onChange={(e) => setGen2(parseInt(e.target.value) || 0)}
+                        className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-gray-400 block font-sans">第三代人数</span>
+                      <input
+                        id="input-gen3"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={gen3}
+                        onChange={(e) => setGen3(parseInt(e.target.value) || 0)}
+                        className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-gray-400 block font-sans">第四代人数</span>
+                      <input
+                        id="input-gen4"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={gen4}
+                        onChange={(e) => setGen4(parseInt(e.target.value) || 0)}
+                        className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-gray-400 block font-sans">第五代人数</span>
+                      <input
+                        id="input-gen5"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={gen5}
+                        onChange={(e) => setGen5(parseInt(e.target.value) || 0)}
+                        className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-gray-400 block font-sans">第六代人数</span>
+                      <input
+                        id="input-gen6"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={gen6}
+                        onChange={(e) => setGen6(parseInt(e.target.value) || 0)}
+                        className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="bg-amber-50 border border-amber-200/50 rounded-lg p-3 text-[10px] text-amber-950 leading-relaxed">
+                    这是组织结构的数学演示。自动生成的人数不代表真实团队增长、实际活跃人数或收入预测。
+                  </div>
+                  <div className="space-y-3">
+                    <div className="space-y-1 p-2 bg-[#1F5D7A]/5 rounded-lg border border-[#1F5D7A]/10">
+                      <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
+                        <span className="font-semibold text-[#12304A]">第一代人数</span>
+                        <span className="font-bold text-[#1F5D7A]">{demoGen1} 人</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="50"
+                        step="1"
+                        value={demoGen1}
+                        onChange={(e) => setDemoGen1(parseInt(e.target.value) || 0)}
+                        className="w-full h-1.5 bg-gray-100 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
+                        id="slider-demo-gen1"
+                      />
+                      <span className="text-[10px] text-gray-400 block italic">用于组织结构演示的起点人数</span>
+                    </div>
 
-              {/* Gen 3 */}
-              <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
-                <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
-                  <span className="font-medium">第三代 (2代成员推荐)</span>
-                  <span className="font-bold text-[#1F5D7A]">{gen3} 人</span>
-                </div>
-                <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
-                  <span>平均每位2代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate2.toFixed(0)} 人</span>
-                </div>
-                <input
-                  type="range" min="0" max="20" step="1" value={repRate2}
-                  onChange={(e) => setRepRate2(parseInt(e.target.value) || 0)}
-                  className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
-                  id="slider-repRate2"
-                />
-                <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：2代 ({gen2}人) × 裂变 ({repRate2.toFixed(0)}) = 约 {gen3}人
-                </span>
-              </div>
+                    <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
+                      <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
+                        <span className="font-medium">第二代（自动生成）</span>
+                        <span className="font-bold text-[#1F5D7A]">{demoGen2} 人</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
+                        <span>第一代→第二代 人均新增人数假设</span>
+                        <span className="font-bold text-amber-600">{avgNew1} 人</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="20"
+                        step="1"
+                        value={avgNew1}
+                        onChange={(e) => setAvgNew1(parseInt(e.target.value) || 0)}
+                        className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
+                        id="slider-avg-new-1"
+                      />
+                      <span className="text-[10px] text-gray-400 block italic font-mono">
+                        计算逻辑：上一代人数 ({demoGen1}人) × 人均新增人数假设 ({avgNew1}) = {demoGen2}人
+                      </span>
+                    </div>
 
-              {/* Gen 4 */}
-              <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
-                <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
-                  <span className="font-medium">第四代 (3代成员推荐)</span>
-                  <span className="font-bold text-[#1F5D7A]">{gen4} 人</span>
-                </div>
-                <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
-                  <span>平均每位3代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate3.toFixed(0)} 人</span>
-                </div>
-                <input
-                  type="range" min="0" max="20" step="1" value={repRate3}
-                  onChange={(e) => setRepRate3(parseInt(e.target.value) || 0)}
-                  className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
-                  id="slider-repRate3"
-                />
-                <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：3代 ({gen3}人) × 裂变 ({repRate3.toFixed(0)}) = 约 {gen4}人
-                </span>
-              </div>
+                    <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
+                      <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
+                        <span className="font-medium">第三代（自动生成）</span>
+                        <span className="font-bold text-[#1F5D7A]">{demoGen3} 人</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
+                        <span>第二代→第三代 人均新增人数假设</span>
+                        <span className="font-bold text-amber-600">{avgNew2} 人</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="20"
+                        step="1"
+                        value={avgNew2}
+                        onChange={(e) => setAvgNew2(parseInt(e.target.value) || 0)}
+                        className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
+                        id="slider-avg-new-2"
+                      />
+                      <span className="text-[10px] text-gray-400 block italic font-mono">
+                        计算逻辑：上一代人数 ({demoGen2}人) × 人均新增人数假设 ({avgNew2}) = {demoGen3}人
+                      </span>
+                    </div>
 
-              {/* Gen 5 */}
-              <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
-                <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
-                  <span className="font-medium">第五代 (4代成员推荐)</span>
-                  <span className="font-bold text-[#1F5D7A]">{gen5} 人</span>
-                </div>
-                <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
-                  <span>平均每位4代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate4.toFixed(0)} 人</span>
-                </div>
-                <input
-                  type="range" min="0" max="20" step="1" value={repRate4}
-                  onChange={(e) => setRepRate4(parseInt(e.target.value) || 0)}
-                  className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
-                  id="slider-repRate4"
-                />
-                <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：4代 ({gen4}人) × 裂变 ({repRate4.toFixed(0)}) = 约 {gen5}人
-                </span>
-              </div>
+                    <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
+                      <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
+                        <span className="font-medium">第四代（自动生成）</span>
+                        <span className="font-bold text-[#1F5D7A]">{demoGen4} 人</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
+                        <span>第三代→第四代 人均新增人数假设</span>
+                        <span className="font-bold text-amber-600">{avgNew3} 人</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="20"
+                        step="1"
+                        value={avgNew3}
+                        onChange={(e) => setAvgNew3(parseInt(e.target.value) || 0)}
+                        className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
+                        id="slider-avg-new-3"
+                      />
+                      <span className="text-[10px] text-gray-400 block italic font-mono">
+                        计算逻辑：上一代人数 ({demoGen3}人) × 人均新增人数假设 ({avgNew3}) = {demoGen4}人
+                      </span>
+                    </div>
 
-              {/* Gen 6 */}
-              <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
-                <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
-                  <span className="font-medium">第六代 (5代成员推荐)</span>
-                  <span className="font-bold text-[#1F5D7A]">{gen6} 人</span>
-                </div>
-                <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
-                  <span>平均每位5代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate5.toFixed(0)} 人</span>
-                </div>
-                <input
-                  type="range" min="0" max="20" step="1" value={repRate5}
-                  onChange={(e) => setRepRate5(parseInt(e.target.value) || 0)}
-                  className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
-                  id="slider-repRate5"
-                />
-                <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：5代 ({gen5}人) × 裂变 ({repRate5.toFixed(0)}) = 约 {gen6}人
-                </span>
-              </div>
+                    <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
+                      <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
+                        <span className="font-medium">第五代（自动生成）</span>
+                        <span className="font-bold text-[#1F5D7A]">{demoGen5} 人</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
+                        <span>第四代→第五代 人均新增人数假设</span>
+                        <span className="font-bold text-amber-600">{avgNew4} 人</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="20"
+                        step="1"
+                        value={avgNew4}
+                        onChange={(e) => setAvgNew4(parseInt(e.target.value) || 0)}
+                        className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
+                        id="slider-avg-new-4"
+                      />
+                      <span className="text-[10px] text-gray-400 block italic font-mono">
+                        计算逻辑：上一代人数 ({demoGen4}人) × 人均新增人数假设 ({avgNew4}) = {demoGen5}人
+                      </span>
+                    </div>
+
+                    <div className="space-y-1 p-2 bg-gray-50/70 rounded-lg border border-gray-100">
+                      <div className="flex justify-between items-center text-xs text-gray-700 font-mono">
+                        <span className="font-medium">第六代（自动生成）</span>
+                        <span className="font-bold text-[#1F5D7A]">{demoGen6} 人</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
+                        <span>第五代→第六代 人均新增人数假设</span>
+                        <span className="font-bold text-amber-600">{avgNew5} 人</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="20"
+                        step="1"
+                        value={avgNew5}
+                        onChange={(e) => setAvgNew5(parseInt(e.target.value) || 0)}
+                        className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
+                        id="slider-avg-new-5"
+                      />
+                      <span className="text-[10px] text-gray-400 block italic font-mono">
+                        计算逻辑：上一代人数 ({demoGen5}人) × 人均新增人数假设 ({avgNew5}) = {demoGen6}人
+                      </span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Base parameters */}
@@ -601,6 +774,24 @@ export const Simulator: React.FC = () => {
 
         {/* Right Col: Complex Dashboard (7 Columns) */}
         <div className="lg:col-span-7 space-y-6" id="results-dashboard">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-gray-500 font-mono">
+              人数来源：{peopleMode === 'actual' ? '用户填写的实际人数' : '组织结构数学演示'}
+            </span>
+            {peopleMode === 'demo' && (
+              <span className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200/50 px-2 py-0.5 rounded-full font-sans font-bold">
+                数学演示
+              </span>
+            )}
+          </div>
+          {peopleMode === 'demo' && (
+            <div className="bg-amber-50 border border-amber-200/50 rounded-xl p-4 text-xs text-amber-950 flex items-start space-x-2">
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-600" />
+              <p className="leading-relaxed">
+                这是组织结构的数学演示。自动生成的人数不代表真实团队增长、实际活跃人数或收入预测。
+              </p>
+            </div>
+          )}
           
           {/* 1. Side-by-side Three Scenarios Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4" id="scenarios-grid">
@@ -864,6 +1055,30 @@ export const Simulator: React.FC = () => {
 
         </div>
 
+      </div>
+
+      <div
+        className="bg-[#FFF4E5] border border-orange-200/50 rounded-xl p-4 sm:p-5 text-xs text-orange-950 flex items-start space-x-3"
+        id="simulator-compliance-bottom"
+      >
+        <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5 text-orange-600" />
+        <div className="space-y-1">
+          <p className="font-bold">合规与审慎提示 (Crucial Compliance Statement)：</p>
+          <button
+            type="button"
+            onClick={() => setShowCompliance((v) => !v)}
+            className="inline-flex items-center text-left text-orange-900 underline underline-offset-2 hover:text-orange-950"
+            aria-expanded={showCompliance}
+            id="btn-toggle-compliance"
+          >
+            {showCompliance ? '收起合规声明与参数说明' : '点击查看合规声明与参数说明'}
+          </button>
+          {showCompliance && (
+            <p className="leading-relaxed text-orange-900">
+              {pmConfig.disclaimer.value} 此外，月度积分 {defPoints} 分、奖金系数 {defCoeff} 以及汇率 {defRate} 均属于<strong>“待官方资料进一步核实、确认的演示默认参数”</strong>，不得视作已经生效执行的官方数字，严禁用于向他人虚构、引诱高收入推广。
+            </p>
+          )}
+        </div>
       </div>
 
     </div>
