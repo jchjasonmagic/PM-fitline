@@ -22,8 +22,8 @@ export const Simulator: React.FC = () => {
   const [gen1, setGen1] = useState<number>(5);
   const [repRate1, setRepRate1] = useState<number>(2); // 1代人均推荐数
   const [repRate2, setRepRate2] = useState<number>(2); // 2代人均推荐数
-  const [repRate3, setRepRate3] = useState<number>(0.75); // 3代人均推荐数
-  const [repRate4, setRepRate4] = useState<number>(0.33); // 4代人均推荐数
+  const [repRate3, setRepRate3] = useState<number>(1); // 3代人均推荐数
+  const [repRate4, setRepRate4] = useState<number>(0); // 4代人均推荐数
   const [repRate5, setRepRate5] = useState<number>(0); // 5代人均推荐数
 
   const gen2 = Math.round(gen1 * repRate1);
@@ -66,11 +66,11 @@ export const Simulator: React.FC = () => {
         const g6 = parsed.gen6 ?? 0;
 
         setGen1(g1);
-        setRepRate1(parsed.repRate1 ?? (g1 > 0 ? parseFloat((g2 / g1).toFixed(2)) : 2));
-        setRepRate2(parsed.repRate2 ?? (g2 > 0 ? parseFloat((g3 / g2).toFixed(2)) : 2));
-        setRepRate3(parsed.repRate3 ?? (g3 > 0 ? parseFloat((g4 / g3).toFixed(2)) : 0.75));
-        setRepRate4(parsed.repRate4 ?? (g4 > 0 ? parseFloat((g5 / g4).toFixed(2)) : 0.33));
-        setRepRate5(parsed.repRate5 ?? (g5 > 0 ? parseFloat((g6 / g5).toFixed(2)) : 0));
+        setRepRate1(Math.round(parsed.repRate1 ?? (g1 > 0 ? g2 / g1 : 2)));
+        setRepRate2(Math.round(parsed.repRate2 ?? (g2 > 0 ? g3 / g2 : 2)));
+        setRepRate3(Math.round(parsed.repRate3 ?? (g3 > 0 ? g4 / g3 : 1)));
+        setRepRate4(Math.round(parsed.repRate4 ?? (g4 > 0 ? g5 / g4 : 0)));
+        setRepRate5(Math.round(parsed.repRate5 ?? (g5 > 0 ? g6 / g5 : 0)));
         setAvgPoints(parsed.avgPoints ?? defPoints);
         setRate(parsed.rate ?? defRate);
         
@@ -124,8 +124,8 @@ export const Simulator: React.FC = () => {
     setGen1(5);
     setRepRate1(2);
     setRepRate2(2);
-    setRepRate3(0.75);
-    setRepRate4(0.33);
+    setRepRate3(1);
+    setRepRate4(0);
     setRepRate5(0);
     setAvgPoints(defPoints);
     setRate(defRate);
@@ -170,7 +170,7 @@ export const Simulator: React.FC = () => {
 
   // Copy results summary
   const handleCopySummary = () => {
-    const text = `【PM透明了解中心-收入情景模拟测算摘要】
+    const text = `【PM健康与事业指南-收入情景模拟测算摘要】
 测算模式：${isAdvanced ? '高级真实经营模式' : '基础简易演示模式'}
 团队人数规划：1代 ${gen1}人 | 2代 ${gen2}人 | 3代 ${gen3}人 | 4代 ${gen4}人 | 5代 ${gen5}人 | 6代 ${gen6}人
 平均有效积分：${avgPoints} 分 (默认 ${defPoints}分)
@@ -287,16 +287,16 @@ export const Simulator: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
                   <span>平均每位1代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate1} 人</span>
+                  <span className="font-bold text-amber-600">{repRate1.toFixed(0)} 人</span>
                 </div>
                 <input
-                  type="range" min="0" max="20" step="0.1" value={repRate1}
-                  onChange={(e) => setRepRate1(parseFloat(e.target.value) || 0)}
+                  type="range" min="0" max="20" step="1" value={repRate1}
+                  onChange={(e) => setRepRate1(parseInt(e.target.value) || 0)}
                   className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
                   id="slider-repRate1"
                 />
                 <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：1代 ({gen1}人) × 裂变 ({repRate1}) = 约 {gen2}人
+                  计算逻辑：1代 ({gen1}人) × 裂变 ({repRate1.toFixed(0)}) = 约 {gen2}人
                 </span>
               </div>
 
@@ -308,16 +308,16 @@ export const Simulator: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
                   <span>平均每位2代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate2} 人</span>
+                  <span className="font-bold text-amber-600">{repRate2.toFixed(0)} 人</span>
                 </div>
                 <input
-                  type="range" min="0" max="10" step="0.1" value={repRate2}
-                  onChange={(e) => setRepRate2(parseFloat(e.target.value) || 0)}
+                  type="range" min="0" max="20" step="1" value={repRate2}
+                  onChange={(e) => setRepRate2(parseInt(e.target.value) || 0)}
                   className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
                   id="slider-repRate2"
                 />
                 <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：2代 ({gen2}人) × 裂变 ({repRate2}) = 约 {gen3}人
+                  计算逻辑：2代 ({gen2}人) × 裂变 ({repRate2.toFixed(0)}) = 约 {gen3}人
                 </span>
               </div>
 
@@ -329,16 +329,16 @@ export const Simulator: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
                   <span>平均每位3代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate3} 人</span>
+                  <span className="font-bold text-amber-600">{repRate3.toFixed(0)} 人</span>
                 </div>
                 <input
-                  type="range" min="0" max="5" step="0.1" value={repRate3}
-                  onChange={(e) => setRepRate3(parseFloat(e.target.value) || 0)}
+                  type="range" min="0" max="20" step="1" value={repRate3}
+                  onChange={(e) => setRepRate3(parseInt(e.target.value) || 0)}
                   className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
                   id="slider-repRate3"
                 />
                 <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：3代 ({gen3}人) × 裂变 ({repRate3}) = 约 {gen4}人
+                  计算逻辑：3代 ({gen3}人) × 裂变 ({repRate3.toFixed(0)}) = 约 {gen4}人
                 </span>
               </div>
 
@@ -350,16 +350,16 @@ export const Simulator: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
                   <span>平均每位4代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate4} 人</span>
+                  <span className="font-bold text-amber-600">{repRate4.toFixed(0)} 人</span>
                 </div>
                 <input
-                  type="range" min="0" max="5" step="0.1" value={repRate4}
-                  onChange={(e) => setRepRate4(parseFloat(e.target.value) || 0)}
+                  type="range" min="0" max="20" step="1" value={repRate4}
+                  onChange={(e) => setRepRate4(parseInt(e.target.value) || 0)}
                   className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
                   id="slider-repRate4"
                 />
                 <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：4代 ({gen4}人) × 裂变 ({repRate4}) = 约 {gen5}人
+                  计算逻辑：4代 ({gen4}人) × 裂变 ({repRate4.toFixed(0)}) = 约 {gen5}人
                 </span>
               </div>
 
@@ -371,16 +371,16 @@ export const Simulator: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center text-[10px] text-gray-500 mt-0.5">
                   <span>平均每位5代推荐新人数 (裂变系数)</span>
-                  <span className="font-bold text-amber-600">{repRate5} 人</span>
+                  <span className="font-bold text-amber-600">{repRate5.toFixed(0)} 人</span>
                 </div>
                 <input
-                  type="range" min="0" max="5" step="0.1" value={repRate5}
-                  onChange={(e) => setRepRate5(parseFloat(e.target.value) || 0)}
+                  type="range" min="0" max="20" step="1" value={repRate5}
+                  onChange={(e) => setRepRate5(parseInt(e.target.value) || 0)}
                   className="w-full h-1.5 bg-gray-200 rounded appearance-none cursor-pointer accent-[#1F5D7A]"
                   id="slider-repRate5"
                 />
                 <span className="text-[10px] text-gray-400 block italic font-mono">
-                  计算逻辑：5代 ({gen5}人) × 裂变 ({repRate5}) = 约 {gen6}人
+                  计算逻辑：5代 ({gen5}人) × 裂变 ({repRate5.toFixed(0)}) = 约 {gen6}人
                 </span>
               </div>
             </div>

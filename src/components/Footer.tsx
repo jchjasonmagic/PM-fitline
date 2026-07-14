@@ -24,7 +24,7 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
               <div className="flex h-8 w-8 items-center justify-center rounded bg-[#C5A35A] text-[#12304A] font-bold text-sm">
                 PM
               </div>
-              <span className="font-sans font-semibold tracking-tight text-lg">PM透明了解中心</span>
+              <span className="font-sans font-semibold tracking-tight text-lg">PM健康与事业指南</span>
             </div>
             <p className="text-sm text-white/70 leading-relaxed max-w-sm">
               我们致力于用简单、客观、理性且完全透明的方式，帮助您全方位评估PM FitLine产品配料成分及合作奖金结算机制。
@@ -88,7 +88,7 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
 
         {/* Bottom copyright */}
         <div className="mt-8 border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-white/40" id="footer-bottom-bar">
-          <p>© {currentYear} PM透明了解中心. All Rights Reserved. 本站为独立第三方研究整理，与PM官方无资本或运营关联。</p>
+          <p>© {currentYear} PM健康与事业指南. All Rights Reserved. 本站为独立第三方研究整理，与PM官方无资本或运营关联。</p>
           <div className="mt-4 sm:mt-0 flex space-x-4">
             <button onClick={() => handlePageClick('sources')} className="hover:text-white flex items-center space-x-1">
               <span>资料核对来源</span>

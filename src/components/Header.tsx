@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) =
             PM
           </div>
           <div className="flex flex-col">
-            <span className="font-sans font-semibold tracking-tight text-lg leading-tight">PM透明了解中心</span>
+            <span className="font-sans font-semibold tracking-tight text-lg leading-tight">PM健康与事业指南</span>
             <span className="font-mono text-[10px] text-white/60">Independent Info Portal</span>
           </div>
         </div>
