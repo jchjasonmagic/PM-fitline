@@ -34,12 +34,13 @@ export const Home: React.FC<HomeProps> = ({ navigateTo }) => {
               draggable={false}
             />
           </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-transparent" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto space-y-6">
-          <h1 className="font-sans font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight text-white leading-tight">
+          <h1 className="font-sans font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight text-white leading-tight drop-shadow-[0_3px_10px_rgba(0,0,0,0.55)]">
             先了解产品，再判断这是否适合你
           </h1>
-          <p className="text-base sm:text-lg text-white/85 max-w-2xl mx-auto font-sans leading-relaxed">
+          <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
             这里用简单、透明、客观的方式，详细说明 PM 基础三合一营养补充套、合作伙伴准入门槛、运营持续成本与奖金计算模型。
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
