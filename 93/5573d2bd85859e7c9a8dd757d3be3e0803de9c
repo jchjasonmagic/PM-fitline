@@ -1,0 +1,20 @@
+src/components/Header.tsx
+  h_7f0d120cea6177 17
+src/pages/Contact.tsx
+  h_7f0d120cea6177 14
+src/components/Footer.tsx
+  h_7f0d120cea6177 49,98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "935573d2bd85859e7c9a8dd757d3be3e0803de9c",
+  "prompts": {},
+  "humans": {
+    "h_7f0d120cea6177": {
+      "author": "jichanghong <jichanghong.jason@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
