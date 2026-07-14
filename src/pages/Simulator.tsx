@@ -10,6 +10,8 @@ const STORAGE_VERSION = 4;
 type PeopleMode = 'actual' | 'demo';
 
 export const Simulator: React.FC = () => {
+  type IntInput = number | '';
+
   // 1. Interactive state modes
   const [isAdvanced, setIsAdvanced] = useState<boolean>(false);
   const [showFormulaDetails, setShowFormulaDetails] = useState<boolean>(false);
@@ -24,12 +26,12 @@ export const Simulator: React.FC = () => {
   const defPercentages = pmConfig.bonusPercentages.value;
 
   // 2. Form state inputs
-  const [gen1, setGen1] = useState<number>(0);
-  const [gen2, setGen2] = useState<number>(0);
-  const [gen3, setGen3] = useState<number>(0);
-  const [gen4, setGen4] = useState<number>(0);
-  const [gen5, setGen5] = useState<number>(0);
-  const [gen6, setGen6] = useState<number>(0);
+  const [gen1, setGen1] = useState<IntInput>(0);
+  const [gen2, setGen2] = useState<IntInput>(0);
+  const [gen3, setGen3] = useState<IntInput>(0);
+  const [gen4, setGen4] = useState<IntInput>(0);
+  const [gen5, setGen5] = useState<IntInput>(0);
+  const [gen6, setGen6] = useState<IntInput>(0);
 
   const [demoGen1, setDemoGen1] = useState<number>(5);
   const [avgNew1, setAvgNew1] = useState<number>(2);
@@ -44,9 +46,11 @@ export const Simulator: React.FC = () => {
   const demoGen5 = Math.round(demoGen4 * avgNew4);
   const demoGen6 = Math.round(demoGen5 * avgNew5);
 
+  const toInt = (v: IntInput) => (v === '' ? 0 : v);
+
   const selectedGenerations =
     peopleMode === 'actual'
-      ? [gen1, gen2, gen3, gen4, gen5, gen6]
+      ? [toInt(gen1), toInt(gen2), toInt(gen3), toInt(gen4), toInt(gen5), toInt(gen6)]
       : [demoGen1, demoGen2, demoGen3, demoGen4, demoGen5, demoGen6];
 
   const [avgPoints, setAvgPoints] = useState<number>(defPoints);
@@ -353,7 +357,7 @@ ${peopleSource}
                         min="0"
                         step="1"
                         value={gen1}
-                        onChange={(e) => setGen1(parseInt(e.target.value) || 0)}
+                        onChange={(e) => setGen1(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value) || 0))}
                         className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
                       />
                     </div>
@@ -365,7 +369,7 @@ ${peopleSource}
                         min="0"
                         step="1"
                         value={gen2}
-                        onChange={(e) => setGen2(parseInt(e.target.value) || 0)}
+                        onChange={(e) => setGen2(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value) || 0))}
                         className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
                       />
                     </div>
@@ -377,7 +381,7 @@ ${peopleSource}
                         min="0"
                         step="1"
                         value={gen3}
-                        onChange={(e) => setGen3(parseInt(e.target.value) || 0)}
+                        onChange={(e) => setGen3(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value) || 0))}
                         className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
                       />
                     </div>
@@ -389,7 +393,7 @@ ${peopleSource}
                         min="0"
                         step="1"
                         value={gen4}
-                        onChange={(e) => setGen4(parseInt(e.target.value) || 0)}
+                        onChange={(e) => setGen4(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value) || 0))}
                         className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
                       />
                     </div>
@@ -401,7 +405,7 @@ ${peopleSource}
                         min="0"
                         step="1"
                         value={gen5}
-                        onChange={(e) => setGen5(parseInt(e.target.value) || 0)}
+                        onChange={(e) => setGen5(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value) || 0))}
                         className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
                       />
                     </div>
@@ -413,7 +417,7 @@ ${peopleSource}
                         min="0"
                         step="1"
                         value={gen6}
-                        onChange={(e) => setGen6(parseInt(e.target.value) || 0)}
+                        onChange={(e) => setGen6(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value) || 0))}
                         className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
                       />
                     </div>
