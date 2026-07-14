@@ -23,8 +23,35 @@ export const Home: React.FC<HomeProps> = ({ navigateTo }) => {
     <div className="space-y-12 pb-16 animate-fadeIn" id="home-page-container">
       
       {/* 1. Hero Section */}
-      <section className="bg-gradient-to-b from-[#12304A] to-[#1F5D7A] text-white py-16 px-4 sm:px-6 lg:px-8 text-center" id="hero-section">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#12304A] to-[#1F5D7A] text-white py-16 px-4 sm:px-6 lg:px-8 text-center" id="hero-section">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -bottom-10 left-1/2 w-[520px] -translate-x-1/2 opacity-[0.28] blur-2xl sm:w-[720px] sm:opacity-[0.34]" style={{ background: 'radial-gradient(circle at 50% 60%, rgba(197,163,90,0.65), rgba(31,93,122,0.0) 60%)' }} />
+          <div className="absolute bottom-[-36px] left-1/2 w-[360px] -translate-x-1/2 sm:bottom-[-44px] sm:w-[520px]">
+            <img
+              src="assets/products/basics.png"
+              alt=""
+              className="w-full select-none opacity-90 drop-shadow-[0_22px_45px_rgba(0,0,0,0.35)]"
+              draggable={false}
+            />
+          </div>
+          <div className="absolute bottom-[-22px] left-[58%] w-[220px] -translate-x-1/2 sm:bottom-[-34px] sm:left-[62%] sm:w-[300px]">
+            <img
+              src="assets/products/restorate.jpg"
+              alt=""
+              className="w-full select-none rounded-[10px] opacity-90 drop-shadow-[0_18px_36px_rgba(0,0,0,0.35)]"
+              draggable={false}
+            />
+          </div>
+          <div className="absolute bottom-[-10px] left-[42%] w-[160px] -translate-x-1/2 sm:bottom-[-16px] sm:left-[40%] sm:w-[200px]">
+            <img
+              src="assets/products/activize.jpg"
+              alt=""
+              className="w-full select-none rounded-[14px] opacity-95 drop-shadow-[0_22px_44px_rgba(0,0,0,0.38)]"
+              draggable={false}
+            />
+          </div>
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto space-y-6">
           <h1 className="font-sans font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight text-white leading-tight">
             先了解产品，再判断这是否适合你
           </h1>
