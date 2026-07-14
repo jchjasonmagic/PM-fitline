@@ -26,7 +26,7 @@ export const Home: React.FC<HomeProps> = ({ navigateTo }) => {
       <section className="relative overflow-hidden bg-gradient-to-b from-[#12304A] to-[#1F5D7A] text-white py-16 px-4 sm:px-6 lg:px-8 text-center" id="hero-section">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -bottom-10 left-1/2 w-[520px] -translate-x-1/2 opacity-[0.28] blur-2xl sm:w-[720px] sm:opacity-[0.34]" style={{ background: 'radial-gradient(circle at 50% 60%, rgba(197,163,90,0.65), rgba(31,93,122,0.0) 60%)' }} />
-          <div className="absolute top-[-6px] left-1/2 w-[380px] -translate-x-1/2 sm:top-auto sm:bottom-[-44px] sm:w-[560px]">
+          <div className="absolute top-[-18px] left-1/2 w-[380px] -translate-x-1/2 sm:top-auto sm:bottom-[-44px] sm:w-[560px]">
             <img
               src="assets/products/bg.jpg"
               alt=""
