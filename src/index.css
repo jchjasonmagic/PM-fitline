@@ -30,19 +30,42 @@ body {
 }
 
 /* Custom styles for range sliders to look highly refined and easy to use on mobile */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  touch-action: pan-y;
+}
+
+input[type="range"].w-full {
+  height: 32px;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 9999px;
+}
+
 input[type="range"]::-webkit-slider-thumb {
-  height: 16px;
-  width: 16px;
+  height: 22px;
+  width: 22px;
   border-radius: 50%;
   background: #1F5D7A;
   cursor: pointer;
   -webkit-appearance: none;
-  margin-top: 0px;
+  margin-top: -8px;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 9999px;
 }
 
 input[type="range"]::-moz-range-thumb {
-  height: 16px;
-  width: 16px;
+  height: 22px;
+  width: 22px;
   border: none;
   border-radius: 50%;
   background: #1F5D7A;
