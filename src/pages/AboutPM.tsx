@@ -32,18 +32,47 @@ export const AboutPM: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
                 <span className="text-[10px] text-gray-400 block uppercase font-mono font-bold">全球营业额 / 排名</span>
-                <span className="text-sm font-semibold text-[#12304A] font-sans mt-1 block">[ 待补充官方权威渠道来源核实 ]</span>
-                <span className="text-[10px] text-gray-400 mt-1 block">本站原则：绝不采用任何非核实的PPT截图排名。</span>
+                <div className="mt-1 space-y-1">
+                  <span className="text-sm font-semibold text-[#12304A] font-sans block">DSN Global 100：Top 5（基于 2025 Retail Revenue）</span>
+                  <span className="text-xs text-gray-500 font-mono block">2025 Retail Sales：&gt; US$4B（公司披露）</span>
+                </div>
+                <a
+                  href="https://chronicle.lu/category/awards/60645-pm-international-enters-top-5-of-dsn-global-100-ranking"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[10px] text-[#1F5D7A] hover:underline mt-2 inline-flex items-center space-x-1"
+                >
+                  <span>来源：Chronicle.lu（2026-04-15）</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
               </div>
               <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
                 <span className="text-[10px] text-gray-400 block uppercase font-mono font-bold">卢森堡及欧洲总部</span>
                 <span className="text-sm font-semibold text-[#12304A] font-sans mt-1 block">Schengen, Luxembourg</span>
-                <span className="text-[10px] text-gray-400 mt-1 block">官方资料源：PM国际总部公开注册信息。</span>
+                <a
+                  href="https://chronicle.lu/category/awards/60645-pm-international-enters-top-5-of-dsn-global-100-ranking"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[10px] text-[#1F5D7A] hover:underline mt-2 inline-flex items-center space-x-1"
+                >
+                  <span>来源：Chronicle.lu（2026-04-15）</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
               </div>
               <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
                 <span className="text-[10px] text-gray-400 block uppercase font-mono font-bold">中国大陆经营主体信息</span>
-                <span className="text-sm font-semibold text-[#12304A] font-sans mt-1 block">普司曼商贸（上海）有限公司</span>
-                <span className="text-[10px] text-gray-400 mt-1 block">根据企业信用信息公示系统占位，有待官方书面文件确认经营范围。</span>
+                <span className="text-sm font-semibold text-[#12304A] font-sans mt-1 block">皮埃姆（中国）日用品有限公司</span>
+                <span className="text-[10px] text-gray-400 mt-1 block">统一社会信用代码（待核验）：91510100091277880T</span>
+                <a
+                  href="https://www.gsxt.gov.cn/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[10px] text-[#1F5D7A] hover:underline mt-2 inline-flex items-center space-x-1"
+                >
+                  <span>建议核对：国家企业信用信息公示系统</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <span className="text-[10px] text-gray-400 mt-1 block">请以公示系统检索结果与最新经营范围为准。</span>
               </div>
               <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
                 <span className="text-[10px] text-gray-400 block uppercase font-mono font-bold">官方网站入口</span>

@@ -37,9 +37,9 @@ export const pmConfig: PMConfig = {
     value: 103,
     unit: '分',
     status: 'pending',
-    source: '个人收集材料 / 存在103分和106分两种口径',
+    source: '用户口径：自动购按月折算积分',
     updatedAt: '2026-07',
-    note: '代表一套基础套在系统中的参考有效积分。现有材料存在不同口径，此为演示参数，不代表官方确认标准。',
+    note: '代表自动购情景下，按“月度”折算的一人份参考有效积分（用于奖金计算起点）。参考逻辑：自动购约2919元/3个月，折算为每月约103积分。不同市场与结算口径可能存在差异，正式以后台结算清单为准。',
   },
   bonusCoefficient: {
     value: 0.51,
@@ -100,7 +100,7 @@ export const pmConfig: PMConfig = {
   wechatContact: {
     value: {
       nickname: 'PM透明了解服务微信',
-      account: 'PM_Info_Center',
+      account: 'xiaoyu1413-_-',
       qrPlaceholder: '微信二维码占位图',
     },
     unit: '微信联系方式',
@@ -146,7 +146,7 @@ export const dataSources: DataSource[] = [
     checkDate: '2026-07',
     type: '产品订阅规则',
     status: 'pending',
-    supports: '自动购2919元/90天周期，及103积分起算基础规则',
+    supports: '自动购2919元/90天周期，及按月折算约103积分的演示口径',
   },
   {
     id: 'src-4',

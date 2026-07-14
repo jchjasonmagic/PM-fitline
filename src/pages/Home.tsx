@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layers, ArrowRight, HelpCircle, ShieldAlert, CheckCircle, Percent, Calculator } from 'lucide-react';
+import { Layers, ArrowRight, ShieldAlert, CheckCircle, Calculator } from 'lucide-react';
 import { pmConfig } from '../config/pmConfig';
 
 interface HomeProps {
@@ -133,71 +133,6 @@ export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
         </div>
       </section>
 
-      {/* 3. Three-In-One Suite Overview */}
-      <section className="bg-gray-50 py-12" id="three-products-overview">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold text-[#12304A]">三合一基础营养套组概览</h2>
-            <p className="text-xs sm:text-sm text-gray-500">
-              三合一基础套由早、晚两个不同的营养冲饮系列组成，用中立、纯粹的营养科学视角解释：
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Activize - 小红 */}
-            <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-3">
-              <div className="flex justify-between items-start">
-                <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-red-50 text-red-600 border border-red-100">晨间搭配</span>
-                <span className="text-xs text-gray-400 font-mono">Activize</span>
-              </div>
-              <h4 className="font-bold text-[#12304A] text-lg">
-                Activize <span className="text-sm text-gray-400 font-normal">（俗称“小红”）</span>
-              </h4>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                晨间饮用的草本复合产品。主要配料为维生素B群（B1, B2, B6, B12, 烟酸, 叶酸等）、瓜拉纳提取物。
-              </p>
-              <div className="text-[11px] bg-red-50/50 p-2.5 rounded border border-red-100/30 text-red-900 leading-normal">
-                <strong>重要提醒：</strong>本品含有天然咖啡因，对咖啡因敏感、孕妇、未成年人及心脏不适者使用前应遵医嘱或注意用量。食用后由于烟酸成分可能引起局部皮肤发红微热，属正常生理反应。
-              </div>
-            </div>
-
-            {/* Basics - 大白 */}
-            <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-3">
-              <div className="flex justify-between items-start">
-                <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-green-50 text-[#6F9272] border border-green-100">晨间/日常</span>
-                <span className="text-xs text-gray-400 font-mono">Basics</span>
-              </div>
-              <h4 className="font-bold text-[#12304A] text-lg">
-                Basics <span className="text-sm text-gray-400 font-normal">（俗称“大白”）</span>
-              </h4>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                晨间日常搭配冲调的谷物复合膳食纤维产品。含有多种果蔬提取物、乳酸菌、可溶性及不可溶性纤维、维生素C及维生素E。
-              </p>
-              <div className="text-[11px] bg-green-50/50 p-2.5 rounded border border-green-100/30 text-[#2c402e] leading-normal">
-                <strong>重要提醒：</strong>不含化学防腐剂。不应替代每日正常饮食；膳食纤维摄入过快、过多可能会导致部分胃肠敏感人群初期出现腹胀、排气增加，建议循序渐进饮用。
-              </div>
-            </div>
-
-            {/* Restorate - 小白 */}
-            <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-3">
-              <div className="flex justify-between items-start">
-                <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100">晚间搭配</span>
-                <span className="text-xs text-gray-400 font-mono">Restorate</span>
-              </div>
-              <h4 className="font-bold text-[#12304A] text-lg">
-                Restorate <span className="text-sm text-gray-400 font-normal">（俗称“小白”）</span>
-              </h4>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                晚间临睡前一小时饮用的复合矿物质冲剂。主要富含钙、镁、锌、铁、铜、铬、硒、维生素D3等微量元素。
-              </p>
-              <div className="text-[11px] bg-blue-50/50 p-2.5 rounded border border-blue-100/30 text-blue-900 leading-normal">
-                <strong>重要提醒：</strong>晚间补充微量元素。泡制时会有轻微气泡释放，冲泡后应静置至不再冒泡后小口慢饮。切勿直接干吞粉末。不适宜严重肾功能不全者等特殊人群。
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* 4. Partner Plan Four-Step Instructions */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8" id="four-step-instruction">
         <div className="text-center space-y-2">
@@ -266,7 +201,7 @@ export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
                 这是奖金计算公式的直观说明。用户可以调整滑动条，改变第一代的推荐有效会员人数，从而直观看到公式的拆解。
               </p>
               <p className="text-xs text-gray-400">
-                默认演示参数：每人有效积分：{points} 分 | 奖金系数：{coeff} | 第一代比例：{(gen1Percent*100).toFixed(0)}% | 汇率：{rate}
+                默认演示参数：每人月度有效积分：{points} 分 | 奖金系数：{coeff} | 第一代比例：{(gen1Percent*100).toFixed(0)}% | 汇率：{rate}
               </p>
               <button
                 id="preview-btn-full-simulator"
@@ -301,11 +236,11 @@ export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
 
               {/* Dynamic Formula Display */}
               <div className="bg-gray-50 rounded p-3 text-xs font-mono text-gray-600 space-y-1.5 border border-gray-100">
-                <div className="text-[10px] text-gray-400 font-sans font-semibold">演示奖金公式：人数 × 积分 × 奖金系数 × 提成比例 × 汇率</div>
+                <div className="text-[10px] text-gray-400 font-sans font-semibold">演示奖金公式：人数 × 月度积分 × 奖金系数 × 提成比例 × 汇率</div>
                 <div className="flex flex-wrap items-center gap-1 text-[#12304A] font-medium text-[11px] sm:text-xs">
                   <span className="bg-[#EEF6F8] px-1 rounded text-[#1F5D7A]">{gen1Count}人</span>
                   <span>×</span>
-                  <span className="bg-gray-100 px-1 rounded">{points}积分</span>
+                  <span className="bg-gray-100 px-1 rounded">{points}月度积分</span>
                   <span>×</span>
                   <span className="bg-gray-100 px-1 rounded">{coeff}系数</span>
                   <span>×</span>
@@ -334,51 +269,6 @@ export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
               </div>
             </div>
 
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Why Emphasize Transparency */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8" id="why-transparency">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-[#12304A]">为什么我们极度强调信息透明？</h2>
-          <p className="text-xs sm:text-sm text-gray-500 max-w-xl mx-auto">
-            摒弃传统夸大式的营销话术。理性消费和客观创业是建立持久合作的前提。
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center" id="transparency-grid">
-          {/* Item 1 */}
-          <div className="space-y-3 p-4">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#EEF6F8] text-[#1F5D7A]">
-              <CheckCircle className="h-6 w-6" />
-            </div>
-            <h4 className="font-bold text-[#12304A]">标签与官方资料为准</h4>
-            <p className="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
-              产品成分、使用剂量、原产国认证信息均来源于原厂外包装标签或可追溯的官方PDF手册。我们不编造神秘功效，不替代医疗建议。
-            </p>
-          </div>
-
-          {/* Item 2 */}
-          <div className="space-y-3 p-4">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FFF4E5] text-[#C5A35A]">
-              <Percent className="h-6 w-6" />
-            </div>
-            <h4 className="font-bold text-[#12304A]">计算过程完全可追溯</h4>
-            <p className="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
-              我们的模拟器完全公开公式，每项奖金、转换积分和最终税前税后扣减细节均可通过“展开详情”查看，绝非不透明黑盒数据。
-            </p>
-          </div>
-
-          {/* Item 3 */}
-          <div className="space-y-3 p-4">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-[#6F9272]">
-              <ShieldAlert className="h-6 w-6" />
-            </div>
-            <h4 className="font-bold text-[#12304A]">收益取决于多项不确定因素</h4>
-            <p className="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
-              在测算中，我们主动融入了流失率、不活跃比例、税费比以及推广物料费用。明确告知成本对收益的抵消，真实还原经营场景。
-            </p>
           </div>
         </div>
       </section>

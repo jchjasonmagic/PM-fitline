@@ -3,17 +3,25 @@ import { WechatConsult } from '../components/WechatConsult';
 import { MessageCircle, ShieldCheck, Mail, Info, Clock, AlertCircle } from 'lucide-react';
 import { pmConfig } from '../config/pmConfig';
 
-export const Contact: React.FC = () => {
+interface ContactProps {
+  setCurrentPage: (page: string) => void;
+}
+
+export const Contact: React.FC<ContactProps> = ({ setCurrentPage }) => {
   const wechat = pmConfig.wechatContact.value;
+  const handlePageClick = (pageId: string) => {
+    setCurrentPage(pageId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 space-y-10 animate-fadeIn" id="contact-page">
       
       {/* Page Header */}
       <div className="border-b border-gray-100 pb-6 text-center space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A]">咨询、联络与隐私保障</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A]">联系我们</h1>
         <p className="text-sm text-gray-500 max-w-2xl mx-auto">
-          如果您对本站整理的数据、模拟器的计算规则仍有不解，或是需要获取最新的产品外包装高清中文标签，随时可以同我们联系。
+          如果您对本站整理的数据、模拟器的计算规则仍有不解，或是需要获取最新的产品外包装高清中文标签，可以通过下方方式联系。
         </p>
       </div>
 
@@ -67,6 +75,43 @@ export const Contact: React.FC = () => {
           <p className="text-[11px] text-gray-500 leading-normal">
             微信沟通属于义工互助和产品自用经验探讨性质。由于工作日客服老师有日常本职安排，一般会在<strong>每日早 9:00 - 晚 21:00 之间的空闲时段</strong>对留言进行解答。感谢您的理解与温和讨论，不喧哗、不争辩、讲科学、遵客观。
           </p>
+        </div>
+      </div>
+
+      <div className="bg-white border border-gray-100 rounded-xl p-5 sm:p-6 shadow-sm space-y-3" id="contact-bottom-nav">
+        <div className="flex items-center justify-between">
+          <h4 className="font-sans font-bold text-sm text-[#12304A]">快捷导航</h4>
+          <span className="text-[10px] text-gray-400 font-mono">NAVIGATION</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <button
+            onClick={() => handlePageClick('home')}
+            className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-[#12304A] hover:bg-gray-100 transition-colors"
+            id="contact-nav-home"
+          >
+            网站首页
+          </button>
+          <button
+            onClick={() => handlePageClick('about')}
+            className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-[#12304A] hover:bg-gray-100 transition-colors"
+            id="contact-nav-about"
+          >
+            认识PM
+          </button>
+          <button
+            onClick={() => handlePageClick('plan')}
+            className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-[#12304A] hover:bg-gray-100 transition-colors"
+            id="contact-nav-plan"
+          >
+            合作计划
+          </button>
+          <button
+            onClick={() => handlePageClick('simulator')}
+            className="rounded-lg border border-gray-200 bg-[#EEF6F8] px-3 py-2 text-[#1F5D7A] hover:bg-[#E3F0F4] transition-colors font-semibold"
+            id="contact-nav-simulator"
+          >
+            收益试算
+          </button>
         </div>
       </div>
 

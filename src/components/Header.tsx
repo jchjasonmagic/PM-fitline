@@ -14,7 +14,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) =
     { id: 'about', label: '认识PM', icon: BookOpen },
     { id: 'plan', label: '合作计划', icon: ShieldAlert },
     { id: 'simulator', label: '收入试算', icon: Calculator },
-    { id: 'sources', label: '资料来源', icon: BookOpen },
   ];
 
   const handleNavClick = (pageId: string) => {

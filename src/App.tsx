@@ -36,7 +36,7 @@ export default function App() {
       case 'sources':
         return <Sources />;
       case 'contact':
-        return <Contact />;
+        return <Contact setCurrentPage={setCurrentPage} />;
       default:
         return <Home setCurrentPage={setCurrentPage} />;
     }

@@ -5,6 +5,7 @@ import { AdvancedCalculatorInput, MultiScenarioResults } from '../types';
 import { calculateMultiScenarios } from '../utils/calculator';
 
 const STORAGE_KEY = 'PM_TRANSPARENT_CALCULATOR_STATE';
+const STORAGE_VERSION = 3;
 
 export const Simulator: React.FC = () => {
   // 1. Interactive state modes
@@ -46,9 +47,9 @@ export const Simulator: React.FC = () => {
   const [monthlyGrowth, setMonthlyGrowth] = useState<number>(4);
   const [monthlyChurn, setMonthlyChurn] = useState<number>(0.08); // 8%
   const [refundRate, setRefundRate] = useState<number>(0.02); // 2%
-  const [personalCost, setPersonalCost] = useState<number>(973); // 2919元/3个月 = 973/月
-  const [marketingCost, setMarketingCost] = useState<number>(200);
-  const [otherCost, setOtherCost] = useState<number>(100);
+  const [personalCost, setPersonalCost] = useState<number>(0);
+  const [marketingCost, setMarketingCost] = useState<number>(0);
+  const [otherCost, setOtherCost] = useState<number>(0);
   const [taxRate, setTaxRate] = useState<number>(0.05); // 5%
   const [bonusCoeff, setBonusCoeff] = useState<number>(defCoeff);
 
@@ -58,6 +59,7 @@ export const Simulator: React.FC = () => {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
+        const storageVersion = parsed.version ?? 1;
         const g1 = parsed.gen1 ?? 5;
         const g2 = parsed.gen2 ?? 10;
         const g3 = parsed.gen3 ?? 20;
@@ -84,9 +86,9 @@ export const Simulator: React.FC = () => {
         setMonthlyGrowth(parsed.monthlyGrowth ?? 4);
         setMonthlyChurn(parsed.monthlyChurn ?? 0.08);
         setRefundRate(parsed.refundRate ?? 0.02);
-        setPersonalCost(parsed.personalCost ?? 973);
-        setMarketingCost(parsed.marketingCost ?? 200);
-        setOtherCost(parsed.otherCost ?? 100);
+        setPersonalCost(storageVersion >= STORAGE_VERSION ? (parsed.personalCost ?? 0) : 0);
+        setMarketingCost(storageVersion >= STORAGE_VERSION ? (parsed.marketingCost ?? 0) : 0);
+        setOtherCost(storageVersion >= STORAGE_VERSION ? (parsed.otherCost ?? 0) : 0);
         setTaxRate(parsed.taxRate ?? 0.05);
         setBonusCoeff(parsed.bonusCoeff ?? defCoeff);
       }
@@ -98,6 +100,7 @@ export const Simulator: React.FC = () => {
   // Save state on changes
   useEffect(() => {
     const stateToSave = {
+      version: STORAGE_VERSION,
       gen1, gen2, gen3, gen4, gen5, gen6,
       repRate1, repRate2, repRate3, repRate4, repRate5,
       avgPoints, rate, isAdvanced,
@@ -138,9 +141,9 @@ export const Simulator: React.FC = () => {
     setMonthlyGrowth(4);
     setMonthlyChurn(0.08);
     setRefundRate(0.02);
-    setPersonalCost(973);
-    setMarketingCost(200);
-    setOtherCost(100);
+    setPersonalCost(0);
+    setMarketingCost(0);
+    setOtherCost(0);
     setTaxRate(0.05);
     setBonusCoeff(defCoeff);
   };
@@ -167,13 +170,23 @@ export const Simulator: React.FC = () => {
   // Run Calculations
   const results: MultiScenarioResults = calculateMultiScenarios(calcInput);
   const cur = results.current;
+  const totals = cur.generationDetails.reduce(
+    (acc, d) => {
+      acc.totalCount += d.totalCount;
+      acc.effectiveCount += d.effectiveCount;
+      acc.totalPoints += d.totalPoints;
+      acc.totalIncome += d.bonusCNY;
+      return acc;
+    },
+    { totalCount: 0, effectiveCount: 0, totalPoints: 0, totalIncome: 0 }
+  );
 
   // Copy results summary
   const handleCopySummary = () => {
     const text = `【PM健康与事业指南-收入情景模拟测算摘要】
 测算模式：${isAdvanced ? '高级真实经营模式' : '基础简易演示模式'}
 团队人数规划：1代 ${gen1}人 | 2代 ${gen2}人 | 3代 ${gen3}人 | 4代 ${gen4}人 | 5代 ${gen5}人 | 6代 ${gen6}人
-平均有效积分：${avgPoints} 分 (默认 ${defPoints}分)
+平均月度有效积分：${avgPoints} 分 (默认 ${defPoints}分)
 结算汇率：${rate} (默认 ${defRate})
 活跃率系数：${isAdvanced ? `1代${(activeRate1*100).toFixed(0)}% / 2代${(activeRate2*100).toFixed(0)}% / 3代${(activeRate3*100).toFixed(0)}%` : '默认100%'}
 
@@ -219,7 +232,7 @@ export const Simulator: React.FC = () => {
         <div className="space-y-1">
           <p className="font-bold">合规与审慎提示 (Crucial Compliance Statement)：</p>
           <p className="leading-relaxed text-orange-900">
-            {pmConfig.disclaimer.value} 此外，积分 {defPoints} 分、奖金系数 {defCoeff} 以及汇率 {defRate} 均属于<strong>“待官方资料进一步核实、确认的演示默认参数”</strong>，不得视作已经生效执行的官方数字，严禁用于向他人虚构、引诱高收入推广。
+            {pmConfig.disclaimer.value} 此外，月度积分 {defPoints} 分、奖金系数 {defCoeff} 以及汇率 {defRate} 均属于<strong>“待官方资料进一步核实、确认的演示默认参数”</strong>，不得视作已经生效执行的官方数字，严禁用于向他人虚构、引诱高收入推广。
           </p>
         </div>
       </div>
@@ -393,13 +406,16 @@ export const Simulator: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] text-gray-400 block font-sans">人均有效积分 (分)</span>
+                  <span className="text-[10px] text-gray-400 block font-sans">人均月度有效积分 (分)</span>
                   <input
                     type="number" min="0" max="5000" value={avgPoints}
                     onChange={(e) => setAvgPoints(parseFloat(e.target.value) || 0)}
                     className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-[#1F5D7A] font-mono font-bold"
                   />
                   <span className="text-[9px] text-amber-600 italic">默认演示参数：{defPoints}分</span>
+                  <span className="text-[9px] text-gray-400 leading-relaxed block">
+                    月度积分口径说明：奖金按“结算月份”核算。自动购通常每 {pmConfig.autoBuyCycleDays.value} 天扣款一次（约3个月/一周期），因此试算用“一位持续自动购成员在单月内折算产生的有效积分”作为起点；本站默认以每月约 {defPoints} 分演示，正式请以您后台当月结算清单为准。
+                  </span>
                 </div>
                 <div className="space-y-1">
                   <span className="text-[10px] text-gray-400 block font-sans">结算汇率 (EUR-CNY)</span>
@@ -681,7 +697,7 @@ export const Simulator: React.FC = () => {
                   <tr className="text-gray-400">
                     <th scope="col" className="pb-3 font-medium">代数</th>
                     <th scope="col" className="pb-3 font-medium">输入人/活跃人</th>
-                    <th scope="col" className="pb-3 font-medium">有效积分</th>
+                    <th scope="col" className="pb-3 font-medium">月度有效积分</th>
                     <th scope="col" className="pb-3 font-medium">提成比</th>
                     <th scope="col" className="pb-3 font-medium text-right">折算奖金 (CNY)</th>
                   </tr>
@@ -702,12 +718,21 @@ export const Simulator: React.FC = () => {
                       {showFormulaDetails && (
                         <tr className="bg-gray-50/50">
                           <td colSpan={5} className="py-2 px-3 text-[10px] text-gray-400 font-mono leading-relaxed border-l-2 border-[#1F5D7A]">
-                            公式分解: {detail.effectiveCount.toFixed(1)} 人 × {detail.pointsPerPerson} 积分 × 系数 {bonusCoeff} × 提成 {(detail.percentage*100).toFixed(0)}% × 汇率 {rate} = ¥ {detail.bonusCNY.toFixed(2)} 元
+                            公式分解: {detail.effectiveCount.toFixed(1)} 人 × {detail.pointsPerPerson} 月度积分 × 系数 {bonusCoeff} × 提成 {(detail.percentage*100).toFixed(0)}% × 汇率 {rate} = ¥ {detail.bonusCNY.toFixed(2)} 元
                           </td>
                         </tr>
                       )}
                     </React.Fragment>
                   ))}
+                  <tr className="bg-[#EEF6F8] text-[#12304A] font-mono">
+                    <td className="py-3 font-semibold">合计</td>
+                    <td className="py-3">
+                      {totals.totalCount}人 / <span className="text-[#1F5D7A] font-bold">{totals.effectiveCount.toFixed(1)}人</span>
+                    </td>
+                    <td className="py-3">{totals.totalPoints.toFixed(0)} 分</td>
+                    <td className="py-3">-</td>
+                    <td className="py-3 font-bold text-right">¥ {totals.totalIncome.toFixed(2)}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>

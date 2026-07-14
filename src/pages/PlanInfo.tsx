@@ -4,6 +4,8 @@ import { pmConfig } from '../config/pmConfig';
 
 export const PlanInfo: React.FC = () => {
   const percent = pmConfig.bonusPercentages.value;
+  const points = pmConfig.validPointsPerPerson.value;
+  const autoBuyPrice = pmConfig.autoBuyPrice.value;
 
   const identities = [
     {
@@ -31,7 +33,7 @@ export const PlanInfo: React.FC = () => {
     },
     {
       name: '有效积分 (Points)',
-      explain: '每一件PM产品都有对应的系统积分。例如一套基础套在演示参数中计为 103 分。奖金的计算都是以积分（而不是人民币支付额）为起点。',
+      explain: `每一件PM产品都有对应的系统积分。以常见“自动购”情景为例：基础套自动购约 ${autoBuyPrice} 元覆盖约3个月，系统奖金计算通常按“月度积分”折算；本站演示以每月约 ${points} 积分作为一位持续自动购成员的参考起点。奖金计算是以积分（而不是人民币支付额）为起点。`,
     },
     {
       name: '第一代至第六代',

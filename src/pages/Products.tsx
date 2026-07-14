@@ -8,6 +8,7 @@ export const Products: React.FC = () => {
       name: 'FitLine Activize Oxyplus',
       commonName: '小红 / 激活氧',
       category: '晨间草本微循环营养冲饮',
+      imageSrc: '/assets/products/activize.jpg',
       ingredients: '葡萄糖、瓜拉纳提取物粉末（提供天然咖啡因）、柠檬酸、甜菜根红、烟酸、泛酸钙、维生素B1、B2、B6、B12、叶酸、维生素C、甜菊糖苷。',
       nutrition: '每份提供高浓度复合维生素B群（帮助能量代谢）、天然果糖、微量元素。',
       timing: '晨间空腹或上午饮用最佳，不建议下午4点后饮用以免影响睡眠质量。',
@@ -24,6 +25,7 @@ export const Products: React.FC = () => {
       name: 'FitLine Basics',
       commonName: '大白 / 基础纤维',
       category: '肠道生态平衡与膳食营养基础',
+      imageSrc: '/assets/products/basics.png',
       ingredients: '燕麦纤维、豌豆纤维、苹果纤维、瓜尔胶、阿拉伯胶、西印度樱桃粉、复合果蔬浓缩提取物、活性乳酸菌（罗伊氏乳杆菌、嗜酸乳杆菌）、多种消化酶、维生素C、维生素E、β-胡萝卜素、甜菊糖苷。',
       nutrition: '富含多种可溶性及不可溶性天然果蔬膳食纤维、数亿级活性益生菌、强效抗氧化群（维C/维E）。',
       timing: '早晨空腹，与Activize（小红）混合冲泡，作为每日晨间营养早餐伴侣。',
@@ -40,6 +42,7 @@ export const Products: React.FC = () => {
       name: 'FitLine Restorate Exotic / Citrus',
       commonName: '小白 / 矿世夜护',
       category: '晚间多重矿物质与碱性微量元素平衡',
+      imageSrc: '/assets/products/restorate.jpg',
       ingredients: '柠檬酸、碳酸钙、碳酸镁、乳酸钙、柠檬酸钾、乳酸锌、乳酸铁、葡萄糖酸铜、铬、硒、维生素D3、甜菊糖苷、天然橙/柠檬风味提取物。',
       nutrition: '科学配比的钙、镁、钾、锌、铁、铜、铬、硒及辅促吸收的维生素D3等微量矿物质。',
       timing: '晚间睡前约30-60分钟小口慢饮。不建议运动或剧烈活动中饮用。',
@@ -136,6 +139,12 @@ export const Products: React.FC = () => {
                 
                 {/* Left col of data */}
                 <div className="md:col-span-8 space-y-4">
+                  <img
+                    src={prod.imageSrc}
+                    alt={`${prod.name} 产品图`}
+                    className="w-full max-w-md rounded-lg border border-gray-100 bg-white"
+                    loading="lazy"
+                  />
                   <div>
                     <strong className="text-[#12304A] block mb-1">主要配料（依据标签）</strong>
                     <p className="text-gray-600 leading-relaxed">{prod.ingredients}</p>
