@@ -34,7 +34,8 @@ export const Home: React.FC<HomeProps> = ({ navigateTo }) => {
               draggable={false}
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/25 to-transparent" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto space-y-6">
           <h1 className="font-sans font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight text-white leading-tight drop-shadow-[0_3px_10px_rgba(0,0,0,0.55)]">
