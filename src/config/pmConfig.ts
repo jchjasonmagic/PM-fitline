@@ -34,12 +34,12 @@ export const pmConfig: PMConfig = {
     note: '由三个月自动购金额 2919 元除以 90 天得出（约 32.43 元/天），作为单日基础营养成本参考。',
   },
   validPointsPerPerson: {
-    value: 103,
+    value: 106,
     unit: '分',
     status: 'pending',
     source: '用户口径：自动购按月折算积分',
     updatedAt: '2026-07',
-    note: '代表自动购情景下，按“月度”折算的一人份参考有效积分（用于奖金计算起点）。参考逻辑：自动购约2919元/3个月，折算为每月约103积分。不同市场与结算口径可能存在差异，正式以后台结算清单为准。',
+    note: '代表自动购情景下，按“月度”折算的一人份参考有效积分（用于奖金计算起点）。参考逻辑：自动购约2919元/3个月，折算为每月约106积分。不同市场与结算口径可能存在差异，正式以后台结算清单为准。',
   },
   bonusCoefficient: {
     value: 0.51,
@@ -146,7 +146,7 @@ export const dataSources: DataSource[] = [
     checkDate: '2026-07',
     type: '产品订阅规则',
     status: 'pending',
-    supports: '自动购2919元/90天周期，及按月折算约103积分的演示口径',
+    supports: '自动购2919元/90天周期，及按月折算约106积分的演示口径',
   },
   {
     id: 'src-4',

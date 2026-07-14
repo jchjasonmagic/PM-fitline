@@ -12,6 +12,7 @@ export const Simulator: React.FC = () => {
   const [isAdvanced, setIsAdvanced] = useState<boolean>(false);
   const [showFormulaDetails, setShowFormulaDetails] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
+  const [showCompliance, setShowCompliance] = useState<boolean>(false);
 
   // Default parameters from config
   const defPoints = pmConfig.validPointsPerPerson.value;
@@ -231,9 +232,20 @@ export const Simulator: React.FC = () => {
         <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5 text-orange-600" />
         <div className="space-y-1">
           <p className="font-bold">合规与审慎提示 (Crucial Compliance Statement)：</p>
-          <p className="leading-relaxed text-orange-900">
-            {pmConfig.disclaimer.value} 此外，月度积分 {defPoints} 分、奖金系数 {defCoeff} 以及汇率 {defRate} 均属于<strong>“待官方资料进一步核实、确认的演示默认参数”</strong>，不得视作已经生效执行的官方数字，严禁用于向他人虚构、引诱高收入推广。
-          </p>
+          <button
+            type="button"
+            onClick={() => setShowCompliance((v) => !v)}
+            className="inline-flex items-center text-left text-orange-900 underline underline-offset-2 hover:text-orange-950"
+            aria-expanded={showCompliance}
+            id="btn-toggle-compliance"
+          >
+            {showCompliance ? '收起合规声明与参数说明' : '点击查看合规声明与参数说明'}
+          </button>
+          {showCompliance && (
+            <p className="leading-relaxed text-orange-900">
+              {pmConfig.disclaimer.value} 此外，月度积分 {defPoints} 分、奖金系数 {defCoeff} 以及汇率 {defRate} 均属于<strong>“待官方资料进一步核实、确认的演示默认参数”</strong>，不得视作已经生效执行的官方数字，严禁用于向他人虚构、引诱高收入推广。
+            </p>
+          )}
         </div>
       </div>
 

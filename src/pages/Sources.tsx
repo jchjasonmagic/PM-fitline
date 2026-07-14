@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, ShieldAlert, CheckCircle, Clock, ExternalLink, Info, AlertTriangle } from 'lucide-react';
+import { BookOpen, ShieldAlert, CheckCircle, Clock, ExternalLink, Info } from 'lucide-react';
 import { dataSources } from '../config/pmConfig';
 
 export const Sources: React.FC = () => {
@@ -84,31 +84,6 @@ export const Sources: React.FC = () => {
               )}
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* Risks & Legal limits warnings */}
-      <div className="bg-amber-50 border border-amber-200/50 rounded-xl p-6 sm:p-8 space-y-4" id="regulatory-limits-box">
-        <div className="flex items-center space-x-2 text-amber-950 font-bold">
-          <AlertTriangle className="h-5 w-5 text-amber-600" />
-          <h3 className="font-sans text-base sm:text-lg">合规说明：直销模式在不同市场的法律边界</h3>
-        </div>
-        
-        <div className="space-y-3 text-xs text-amber-950 leading-relaxed">
-          <p>
-            PM-International 在全球采用关系网络行销（Multi-Level Marketing）作为其主要的分销渠道。但在不同的主权国家或特定司法管辖区，其合规红线和提成考核政策存在极其严苛的法定约束：
-          </p>
-          <ul className="list-disc pl-5 space-y-1.5 text-amber-900">
-            <li>
-              <strong>中国大陆市场：</strong>根据中国国务院颁布的《直销管理条例》和《禁止传销条例》，任何多层次累加团队业绩提取“代数奖/无限代奖”的行为都在法律监管之列。因此，在没有获得大陆有关部门审批并获发直销经营许可证前，任何非授权组织或个人在大陆宣讲代数提成模式均具有高昂的涉传涉非法律风险。
-            </li>
-            <li>
-              <strong>跨境电商规则：</strong>许多消费者和合作伙伴是以“跨境进口自用（保税区直邮或海外转邮）”的形式获得产品的。这意味着商品购买仅用于个人家庭健康消费，<strong>严禁在境内任何线下商超、药店陈列零售，亦不得进行二次商业分销</strong>。
-            </li>
-            <li>
-              <strong>网络虚假宣传责任：</strong>自制或分享任何不实产品疗效PPT，或者在微信社群暗示产品“能治病、防癌、降三高”，一经监管查实，不仅面临官方账号永久封禁，更可能因违反《广告法》而招致罚款。
-            </li>
-          </ul>
         </div>
       </div>
 
