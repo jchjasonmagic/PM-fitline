@@ -1,5 +1,5 @@
 {
-  "name": "PM透明了解中心",
+  "name": "PM健康与事业指南",
   "description": "一个提供PM三合一基础套信息、参与条件、成本与奖金计算逻辑透明说明与收益情景模拟的独立信息平台。",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

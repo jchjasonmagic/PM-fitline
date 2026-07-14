@@ -22,9 +22,9 @@ export const Simulator: React.FC = () => {
 
   // 2. Form state inputs
   const [gen1, setGen1] = useState<number>(5);
-  const [repRate1, setRepRate1] = useState<number>(2); // 1代人均推荐数
-  const [repRate2, setRepRate2] = useState<number>(2); // 2代人均推荐数
-  const [repRate3, setRepRate3] = useState<number>(1); // 3代人均推荐数
+  const [repRate1, setRepRate1] = useState<number>(0); // 1代人均推荐数
+  const [repRate2, setRepRate2] = useState<number>(0); // 2代人均推荐数
+  const [repRate3, setRepRate3] = useState<number>(0); // 3代人均推荐数
   const [repRate4, setRepRate4] = useState<number>(0); // 4代人均推荐数
   const [repRate5, setRepRate5] = useState<number>(0); // 5代人均推荐数
 
@@ -62,16 +62,16 @@ export const Simulator: React.FC = () => {
         const parsed = JSON.parse(saved);
         const storageVersion = parsed.version ?? 1;
         const g1 = parsed.gen1 ?? 5;
-        const g2 = parsed.gen2 ?? 10;
-        const g3 = parsed.gen3 ?? 20;
-        const g4 = parsed.gen4 ?? 15;
-        const g5 = parsed.gen5 ?? 5;
+        const g2 = parsed.gen2 ?? 0;
+        const g3 = parsed.gen3 ?? 0;
+        const g4 = parsed.gen4 ?? 0;
+        const g5 = parsed.gen5 ?? 0;
         const g6 = parsed.gen6 ?? 0;
 
         setGen1(g1);
-        setRepRate1(Math.round(parsed.repRate1 ?? (g1 > 0 ? g2 / g1 : 2)));
-        setRepRate2(Math.round(parsed.repRate2 ?? (g2 > 0 ? g3 / g2 : 2)));
-        setRepRate3(Math.round(parsed.repRate3 ?? (g3 > 0 ? g4 / g3 : 1)));
+        setRepRate1(Math.round(parsed.repRate1 ?? (g1 > 0 ? g2 / g1 : 0)));
+        setRepRate2(Math.round(parsed.repRate2 ?? (g2 > 0 ? g3 / g2 : 0)));
+        setRepRate3(Math.round(parsed.repRate3 ?? (g3 > 0 ? g4 / g3 : 0)));
         setRepRate4(Math.round(parsed.repRate4 ?? (g4 > 0 ? g5 / g4 : 0)));
         setRepRate5(Math.round(parsed.repRate5 ?? (g5 > 0 ? g6 / g5 : 0)));
         setAvgPoints(parsed.avgPoints ?? defPoints);
@@ -126,9 +126,9 @@ export const Simulator: React.FC = () => {
   // Revert / Reset
   const handleReset = () => {
     setGen1(5);
-    setRepRate1(2);
-    setRepRate2(2);
-    setRepRate3(1);
+    setRepRate1(0);
+    setRepRate2(0);
+    setRepRate3(0);
     setRepRate4(0);
     setRepRate5(0);
     setAvgPoints(defPoints);

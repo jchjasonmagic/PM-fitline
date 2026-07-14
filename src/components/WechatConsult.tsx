@@ -106,7 +106,7 @@ export const WechatConsult: React.FC<{ defaultTopic?: string }> = ({ defaultTopi
             <div className="bg-white border border-[#1F5D7A]/10 rounded-lg p-3 space-y-2 animate-fadeIn">
               <div className="flex items-start space-x-2">
                 <span className="text-xs font-bold text-[#1F5D7A] bg-[#EEF6F8] p-1 rounded font-mono">准备发送的信息:</span>
-                <p className="text-xs text-[#263238] italic font-medium py-1">“你好，我已阅读了透明了解中心的内容，{selectedTopic}。”</p>
+                <p className="text-xs text-[#263238] italic font-medium py-1">“你好，我已阅读了PM健康与事业指南的内容，{selectedTopic}。”</p>
               </div>
               <div className="flex items-center space-x-2">
                 <input 
