@@ -93,35 +93,23 @@ export const Simulator: React.FC = () => {
         const storageVersion = parsed.version ?? 1;
         if (storageVersion >= STORAGE_VERSION) {
           setPeopleMode((parsed.peopleMode ?? 'actual') as PeopleMode);
-          setGen1(parsed.gen1 ?? 0);
-          setGen2(parsed.gen2 ?? 0);
-          setGen3(parsed.gen3 ?? 0);
-          setGen4(parsed.gen4 ?? 0);
-          setGen5(parsed.gen5 ?? 0);
-          setGen6(parsed.gen6 ?? 0);
-
-          setDemoGen1(Math.round(parsed.demoGen1 ?? 5));
-          setAvgNew1(Math.round(parsed.avgNew1 ?? 2));
-          setAvgNew2(Math.round(parsed.avgNew2 ?? 2));
-          setAvgNew3(Math.round(parsed.avgNew3 ?? 1));
-          setAvgNew4(Math.round(parsed.avgNew4 ?? 0));
-          setAvgNew5(Math.round(parsed.avgNew5 ?? 0));
         } else {
           setPeopleMode('actual');
-          setGen1(parsed.gen1 ?? 0);
-          setGen2(parsed.gen2 ?? 0);
-          setGen3(parsed.gen3 ?? 0);
-          setGen4(parsed.gen4 ?? 0);
-          setGen5(parsed.gen5 ?? 0);
-          setGen6(parsed.gen6 ?? 0);
-
-          setDemoGen1(5);
-          setAvgNew1(2);
-          setAvgNew2(2);
-          setAvgNew3(1);
-          setAvgNew4(0);
-          setAvgNew5(0);
         }
+
+        setGen1(0);
+        setGen2(0);
+        setGen3(0);
+        setGen4(0);
+        setGen5(0);
+        setGen6(0);
+
+        setDemoGen1(5);
+        setAvgNew1(2);
+        setAvgNew2(2);
+        setAvgNew3(1);
+        setAvgNew4(0);
+        setAvgNew5(0);
         setAvgPoints(parsed.avgPoints ?? defPoints);
         setRate(parsed.rate ?? defRate);
         
@@ -151,8 +139,6 @@ export const Simulator: React.FC = () => {
     const stateToSave = {
       version: STORAGE_VERSION,
       peopleMode,
-      gen1, gen2, gen3, gen4, gen5, gen6,
-      demoGen1, avgNew1, avgNew2, avgNew3, avgNew4, avgNew5,
       avgPoints, rate, isAdvanced,
       activeRate1, activeRate2, activeRate3, activeRate4, activeRate5, activeRate6,
       monthlyGrowth, monthlyChurn, refundRate, personalCost, marketingCost, otherCost,
@@ -165,8 +151,6 @@ export const Simulator: React.FC = () => {
     }
   }, [
     peopleMode,
-    gen1, gen2, gen3, gen4, gen5, gen6,
-    demoGen1, avgNew1, avgNew2, avgNew3, avgNew4, avgNew5,
     avgPoints, rate, isAdvanced,
     activeRate1, activeRate2, activeRate3, activeRate4, activeRate5, activeRate6,
     monthlyGrowth, monthlyChurn, refundRate, personalCost, marketingCost, otherCost,
