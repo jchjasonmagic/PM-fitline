@@ -65,9 +65,11 @@ export const Home: React.FC<HomeProps> = ({ navigateTo }) => {
               <span>试算收益情景</span>
             </button>
           </div>
-          <div className="text-xs text-white/50 pt-2 font-mono flex items-center justify-center space-x-1">
-            <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
-            <span>非官方网站 | 独立信息整理测算工具</span>
+          <div className="pt-3 flex items-center justify-center">
+            <div className="inline-flex items-center space-x-2 rounded-full bg-black/45 border border-white/15 px-3 py-1.5 text-[11px] text-white/90 font-mono backdrop-blur-sm drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]">
+              <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+              <span>非官方网站 | 独立信息整理测算工具</span>
+            </div>
           </div>
         </div>
       </section>
