@@ -3,10 +3,10 @@ import { Menu, X, ShieldAlert, Calculator, BookOpen, Info, MessageCircle } from 
 
 interface HeaderProps {
   currentPage: string;
-  setCurrentPage: (page: string) => void;
+  navigateTo: (page: string) => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
+export const Header: React.FC<HeaderProps> = ({ currentPage, navigateTo }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
@@ -18,9 +18,8 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) =
   ];
 
   const handleNavClick = (pageId: string) => {
-    setCurrentPage(pageId);
+    navigateTo(pageId);
     setIsOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

@@ -3,13 +3,12 @@ import { ShieldCheck, ArrowUpRight } from 'lucide-react';
 import { pmConfig } from '../config/pmConfig';
 
 interface FooterProps {
-  setCurrentPage: (page: string) => void;
+  navigateTo: (page: string) => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
+export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
   const handlePageClick = (pageId: string) => {
-    setCurrentPage(pageId);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigateTo(pageId);
   };
 
   const currentYear = new Date().getFullYear();

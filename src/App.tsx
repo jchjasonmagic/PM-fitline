@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 
@@ -14,13 +14,52 @@ import { Sources } from './pages/Sources';
 import { Contact } from './pages/Contact';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<string>('home');
+  const getPageFromHash = () => {
+    const raw = window.location.hash || '';
+    const cleaned = raw.startsWith('#') ? raw.slice(1) : raw;
+    const normalized = cleaned.startsWith('/') ? cleaned.slice(1) : cleaned;
+    const page = normalized.split('?')[0].split('&')[0].trim();
+    return page || 'home';
+  };
+
+  const [currentPage, setCurrentPage] = useState<string>(() => getPageFromHash());
+
+  const navigateTo = (pageId: string) => {
+    const next = pageId === 'home' ? '#/' : `#/${pageId}`;
+    if (!window.location.hash || window.location.hash === '#') {
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${next}`);
+      setCurrentPage(pageId);
+      return;
+    }
+    if (window.location.hash !== next) {
+      window.location.hash = next;
+      return;
+    }
+    setCurrentPage(pageId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (!window.location.hash || window.location.hash === '#') {
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#/`);
+    }
+
+    const syncFromHash = () => {
+      const page = getPageFromHash();
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    syncFromHash();
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  }, []);
 
   // Page selector
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
-        return <Home setCurrentPage={setCurrentPage} />;
+        return <Home navigateTo={navigateTo} />;
       case 'about':
         return <AboutPM />;
       case 'products':
@@ -36,16 +75,16 @@ export default function App() {
       case 'sources':
         return <Sources />;
       case 'contact':
-        return <Contact setCurrentPage={setCurrentPage} />;
+        return <Contact />;
       default:
-        return <Home setCurrentPage={setCurrentPage} />;
+        return <Home navigateTo={navigateTo} />;
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-[#263238] selection:bg-[#C5A35A]/35" id="app-wrapper">
       {/* Dynamic Header */}
-      <Header currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      <Header currentPage={currentPage} navigateTo={navigateTo} />
 
       {/* Main Content Viewport */}
       <main className="flex-grow" id="main-content-viewport">
@@ -53,7 +92,7 @@ export default function App() {
       </main>
 
       {/* Dynamic Footer */}
-      <Footer setCurrentPage={setCurrentPage} />
+      <Footer navigateTo={navigateTo} />
     </div>
   );
 }

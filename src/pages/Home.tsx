@@ -3,10 +3,10 @@ import { Layers, ArrowRight, ShieldAlert, CheckCircle, Calculator } from 'lucide
 import { pmConfig } from '../config/pmConfig';
 
 interface HomeProps {
-  setCurrentPage: (page: string) => void;
+  navigateTo: (page: string) => void;
 }
 
-export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
+export const Home: React.FC<HomeProps> = ({ navigateTo }) => {
   // Mini simulator state for the preview section
   const [gen1Count, setGen1Count] = useState<number>(5);
   
@@ -35,8 +35,7 @@ export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
             <button
               id="hero-btn-products"
               onClick={() => {
-                setCurrentPage('products');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                navigateTo('products');
               }}
               className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#C5A35A] hover:bg-[#b08e45] text-[#12304A] font-bold text-sm shadow transition-colors flex items-center justify-center space-x-2"
             >
@@ -46,8 +45,7 @@ export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
             <button
               id="hero-btn-simulator"
               onClick={() => {
-                setCurrentPage('simulator');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                navigateTo('simulator');
               }}
               className="w-full sm:w-auto px-6 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/25 font-bold text-sm shadow transition-colors flex items-center justify-center space-x-2"
             >
@@ -88,8 +86,7 @@ export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
           <button
             id="path-btn-products"
             onClick={() => {
-              setCurrentPage('products');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              navigateTo('products');
             }}
             className="mt-6 inline-flex items-center space-x-1 text-sm font-semibold text-[#1F5D7A] hover:text-[#12304A] self-start"
           >
@@ -122,8 +119,7 @@ export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
           <button
             id="path-btn-plan"
             onClick={() => {
-              setCurrentPage('plan');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              navigateTo('plan');
             }}
             className="mt-6 inline-flex items-center space-x-1 text-sm font-semibold text-[#1F5D7A] hover:text-[#12304A] self-start"
           >
@@ -206,8 +202,7 @@ export const Home: React.FC<HomeProps> = ({ setCurrentPage }) => {
               <button
                 id="preview-btn-full-simulator"
                 onClick={() => {
-                  setCurrentPage('simulator');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  navigateTo('simulator');
                 }}
                 className="mt-2 inline-flex items-center space-x-1 text-xs font-semibold text-[#1F5D7A] hover:text-[#12304A]"
               >

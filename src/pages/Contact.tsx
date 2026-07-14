@@ -3,11 +3,7 @@ import { WechatConsult } from '../components/WechatConsult';
 import { ShieldCheck, Clock } from 'lucide-react';
 import { pmConfig } from '../config/pmConfig';
 
-interface ContactProps {
-  setCurrentPage: (page: string) => void;
-}
-
-export const Contact: React.FC<ContactProps> = ({ setCurrentPage }) => {
+export const Contact: React.FC = () => {
   const wechat = pmConfig.wechatContact.value;
 
   return (
