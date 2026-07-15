@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Bot, Send, Trash2, AlertCircle } from 'lucide-react';
+import { Bot, Send, Trash2, AlertCircle, Loader2 } from 'lucide-react';
 
 type ChatRole = 'user' | 'assistant';
 
@@ -336,16 +336,28 @@ export const QA: React.FC = () => {
           <span className="hidden sm:inline">清空对话</span>
         </button>
 
+        {isSending && (
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px]" />
+            <div className="absolute left-1/2 top-24 -translate-x-1/2">
+              <div className="inline-flex items-center space-x-2 rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-[#12304A] shadow-md border border-gray-100">
+                <Loader2 className="h-4 w-4 animate-spin text-[#1F5D7A]" />
+                <span>正在生成回答…</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="p-5 sm:p-6 space-y-4" id="qa-messages">
           {messages.map((m, idx) => {
             const isUser = m.role === 'user';
             return (
               <div
                 key={`${m.role}-${idx}`}
-                className={`flex ${isUser ? 'justify-end' : 'justify-start pr-16 sm:pr-0'}`}
+                className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[92%] sm:max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  className={`${isUser ? 'max-w-[92%]' : 'max-w-full'} sm:max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                     isUser
                       ? 'bg-[#1F5D7A] text-white'
                       : 'bg-gray-50 text-[#263238] border border-gray-100'
@@ -356,6 +368,17 @@ export const QA: React.FC = () => {
               </div>
             );
           })}
+
+          {isSending && (
+            <div className="flex justify-start">
+              <div className="max-w-full sm:max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed bg-gray-50 text-[#263238] border border-gray-100">
+                <div className="flex items-center space-x-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-[#1F5D7A]" />
+                  <span>生成中…</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="flex items-start space-x-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
@@ -383,9 +406,9 @@ export const QA: React.FC = () => {
               id="btn-qa-send"
               onClick={sendQuestion}
               disabled={isSending || !input.trim()}
-              className="inline-flex items-center justify-center space-x-2 rounded-xl bg-[#C5A35A] px-4 py-3 text-sm font-bold text-[#12304A] shadow-sm hover:bg-[#b08e45] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center space-x-2 rounded-xl bg-[#C5A35A] px-4 py-3 text-sm font-bold text-[#12304A] shadow-sm hover:bg-[#b08e45] disabled:opacity-80 disabled:cursor-not-allowed"
             >
-              <Send className="h-4 w-4" />
+              {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               <span>{isSending ? '生成中…' : '发送'}</span>
             </button>
           </div>
