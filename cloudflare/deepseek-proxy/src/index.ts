@@ -3,9 +3,30 @@ type Env = {
   DEEPSEEK_API_BASE?: string;
   DEEPSEEK_MODEL?: string;
   ALLOW_ORIGIN?: string;
+  RATE_LIMIT_PER_MINUTE?: number | string;
+  RATE_LIMIT_PER_DAY?: number | string;
+  RATE_LIMITER: DurableObjectNamespace;
 };
 
 type IncomingMessage = { role: 'user' | 'assistant'; content: string };
+
+type DurableObjectStorage = {
+  get<T = unknown>(key: string): Promise<T | undefined>;
+  put(key: string, value: unknown): Promise<void>;
+};
+
+type DurableObjectState = {
+  storage: DurableObjectStorage;
+};
+
+type DurableObjectStub = {
+  fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
+};
+
+type DurableObjectNamespace = {
+  idFromName(name: string): unknown;
+  get(id: unknown): DurableObjectStub;
+};
 
 const json = (data: unknown, init?: ResponseInit) =>
   new Response(JSON.stringify(data), {
@@ -22,6 +43,107 @@ const corsHeaders = (origin: string) => ({
   'Access-Control-Allow-Headers': 'Content-Type,Authorization',
   'Access-Control-Max-Age': '86400',
 });
+
+const getClientIp = (request: Request) => {
+  const direct = request.headers.get('cf-connecting-ip')?.trim();
+  if (direct) return direct;
+  const forwarded = request.headers.get('x-forwarded-for')?.split(',')?.[0]?.trim();
+  if (forwarded) return forwarded;
+  return 'unknown';
+};
+
+export class RateLimiter {
+  private state: DurableObjectState;
+  constructor(state: DurableObjectState) {
+    this.state = state;
+  }
+
+  async fetch(request: Request): Promise<Response> {
+    if (request.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
+
+    let payload: any = {};
+    try {
+      payload = await request.json();
+    } catch {}
+
+    const now = Number(payload?.now ?? Date.now());
+    const limitPerMinute = Math.max(1, Number(payload?.limitPerMinute ?? 20));
+    const limitPerDay = Math.max(1, Number(payload?.limitPerDay ?? 100));
+    const minute = Math.floor(now / 60000);
+    const day = Math.floor(now / 86400000);
+
+    const stored =
+      (await this.state.storage.get<{ minute: number; minuteCount: number; day: number; dayCount: number }>('rl')) ??
+      { minute, minuteCount: 0, day, dayCount: 0 };
+
+    const next = {
+      minute,
+      minuteCount: stored.minute === minute ? stored.minuteCount + 1 : 1,
+      day,
+      dayCount: stored.day === day ? stored.dayCount + 1 : 1,
+    };
+    await this.state.storage.put('rl', next);
+
+    const minuteAllowed = next.minuteCount <= limitPerMinute;
+    const dayAllowed = next.dayCount <= limitPerDay;
+    const allowed = minuteAllowed && dayAllowed;
+
+    const minuteRemaining = Math.max(0, limitPerMinute - next.minuteCount);
+    const dayRemaining = Math.max(0, limitPerDay - next.dayCount);
+
+    const resetMinuteInMs = (minute + 1) * 60000 - now;
+    const resetDayInMs = (day + 1) * 86400000 - now;
+
+    return new Response(
+      JSON.stringify({
+        allowed,
+        minuteAllowed,
+        dayAllowed,
+        minuteRemaining,
+        dayRemaining,
+        resetMinuteInMs,
+        resetDayInMs,
+      }),
+      {
+      status: 200,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      }
+    );
+  }
+}
+
+const enforceRateLimit = async (request: Request, env: Env) => {
+  const ip = getClientIp(request);
+  const limitPerMinute = Math.max(1, Number(env.RATE_LIMIT_PER_MINUTE ?? 20));
+  const limitPerDay = Math.max(1, Number(env.RATE_LIMIT_PER_DAY ?? 100));
+  const id = env.RATE_LIMITER.idFromName(ip);
+  const stub = env.RATE_LIMITER.get(id);
+  const resp = await stub.fetch('https://rate-limiter/check', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ now: Date.now(), limitPerMinute, limitPerDay }),
+  });
+  const data = (await resp.json()) as {
+    allowed?: boolean;
+    minuteAllowed?: boolean;
+    dayAllowed?: boolean;
+    minuteRemaining?: number;
+    dayRemaining?: number;
+    resetMinuteInMs?: number;
+    resetDayInMs?: number;
+  };
+  return {
+    allowed: Boolean(data.allowed),
+    minuteAllowed: Boolean(data.minuteAllowed),
+    dayAllowed: Boolean(data.dayAllowed),
+    minuteRemaining: Number(data.minuteRemaining ?? 0),
+    dayRemaining: Number(data.dayRemaining ?? 0),
+    resetMinuteInMs: Number(data.resetMinuteInMs ?? 0),
+    resetDayInMs: Number(data.resetDayInMs ?? 0),
+    limitPerMinute,
+    limitPerDay,
+  };
+};
 
 const knowledgeContext = `【站内知识（2026-07 整理口径）】
 - 基础三合一产品：Basics / Activize / Restorate（不同地区与版本配方可能不同，以当地外包装与官方说明为准）
@@ -68,6 +190,48 @@ const isSiteTopic = (question: string, history: IncomingMessage[]) => {
   return keywords.some((k) => text.includes(k.toLowerCase()));
 };
 
+const isPmTopic = (question: string, history: IncomingMessage[]) => {
+  const text = `${question}\n${(history ?? []).map((m) => m.content).join('\n')}`.toLowerCase();
+  const keywords = [
+    'pm',
+    'fitline',
+    'pm fitline',
+    'activize',
+    'basics',
+    'restorate',
+    '小红',
+    '大白',
+    '小白',
+    '三合一',
+    '基础三合一',
+    '自动购',
+    '合作计划',
+    '合作伙伴',
+    '推荐',
+    '奖金',
+    '积分',
+    '活跃',
+    '月度',
+    '有效积分',
+    '产品',
+    '配方',
+    '成分',
+    '用量',
+    '怎么吃',
+    '怎么喝',
+    '饮用',
+    '食用',
+    '注意事项',
+    '孕妇',
+    '哺乳',
+    '儿童',
+    '老人',
+    '慢性病',
+    '用药',
+  ];
+  return keywords.some((k) => text.includes(k.toLowerCase()));
+};
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const allowOrigin = env.ALLOW_ORIGIN?.trim() || '*';
@@ -80,6 +244,24 @@ export default {
       return json(
         { error: 'Method Not Allowed' },
         { status: 405, headers: corsHeaders(allowOrigin) }
+      );
+    }
+
+    const rl = await enforceRateLimit(request, env);
+    if (!rl.allowed) {
+      const exceededMinute = !rl.minuteAllowed;
+      const exceededDay = !rl.dayAllowed;
+      const retryAfterMs = exceededMinute && exceededDay ? Math.min(rl.resetMinuteInMs, rl.resetDayInMs) : exceededMinute ? rl.resetMinuteInMs : rl.resetDayInMs;
+      const retryAfterSeconds = Math.max(1, Math.ceil(retryAfterMs / 1000));
+      const detail = exceededDay
+        ? `Rate limit exceeded (${rl.limitPerDay}/day)`
+        : `Rate limit exceeded (${rl.limitPerMinute}/min)`;
+      return json(
+        { error: 'Too Many Requests', detail },
+        {
+          status: 429,
+          headers: { ...corsHeaders(allowOrigin), 'Retry-After': String(retryAfterSeconds) },
+        }
       );
     }
 
@@ -114,13 +296,18 @@ export default {
 1) 不要夸大产品功效，不要做收益承诺，不要引导投资或财富保障。
 2) 涉及政策与结算：提示以官方最新书面文件与账户结算单为准。
 3) 对不确定内容：明确说明不确定，并给出可核对的来源/路径。
-4) 对于健康/疾病/孕哺/用药等问题：只提供一般性信息与就医建议，不做个体化医学判断。
+4) 对于健康/疾病/孕哺/用药等问题：只提供一般性信息与就医建议，不做个体化医学判断。`;
 
-非 PM/站内话题（统一处理）：
-1) 先用 1–3 句给出通用、低风险的回答（不编造具体政策/数字/结论）。
+    const offTopicPrompt = `你是一个中立的中文问答助手。用户的问题与 PM FitLine/本站内容无关时，按以下格式回复：
+1) 先用 1–3 句给出通用、低风险的回答（避免编造具体政策/数字/结论）。
 2) 用 1 句说明“这与 PM FitLine/本站内容不直接相关”。
 3) 给出 2–3 个可继续追问的 PM/本站相关问题示例，引导用户回到产品、积分口径或模拟器参数。`;
-    const systemContent = isSiteTopic(question, safeHistory) ? `${systemPrompt}\n\n${knowledgeContext}` : systemPrompt;
+
+    const systemContent = !isPmTopic(question, safeHistory)
+      ? offTopicPrompt
+      : isSiteTopic(question, safeHistory)
+        ? `${systemPrompt}\n\n${knowledgeContext}`
+        : systemPrompt;
 
     const model = env.DEEPSEEK_MODEL?.trim() || 'deepseek-chat';
     const apiBase = env.DEEPSEEK_API_BASE?.trim() || 'https://api.deepseek.com';
