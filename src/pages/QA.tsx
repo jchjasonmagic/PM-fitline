@@ -282,16 +282,28 @@ export const QA: React.FC = () => {
         .slice(-12)
         .map((m) => ({ role: m.role, content: m.content }));
 
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 25000);
+
       const resp = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question, history }),
+        signal: controller.signal,
       });
 
-      const data = (await resp.json()) as { answer?: string; error?: string };
-      if (!resp.ok) {
-        throw new Error(data.error || `请求失败 (${resp.status})`);
+      window.clearTimeout(timeoutId);
+
+      const rawText = await resp.text();
+      let data: { answer?: string; error?: string };
+      try {
+        data = JSON.parse(rawText) as { answer?: string; error?: string };
+      } catch {
+        throw new Error(`响应解析失败 (${resp.status})`);
       }
+
+      if (!resp.ok) throw new Error(data.error || `请求失败 (${resp.status})`);
+
       const answer = (data.answer ?? '').trim();
       if (!answer) {
         throw new Error('服务返回为空');
@@ -299,7 +311,12 @@ export const QA: React.FC = () => {
 
       setMessages((prev) => [...prev, { role: 'assistant', content: answer }]);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : '请求失败';
+      const msg =
+        e instanceof DOMException && e.name === 'AbortError'
+          ? '网络连接超时（25s）。如果你在国内网络，通常是接口不可达或仍指向 workers.dev。请确认 GitHub Secret VITE_QA_API_BASE 已配置为 https://qa.premium.shiquanpine.com（不要带 /api/ask），并重新触发 GitHub Actions 部署后再试。'
+          : e instanceof Error
+            ? e.message
+            : '请求失败';
       setError(msg);
       setMessages((prev) => [
         ...prev,
