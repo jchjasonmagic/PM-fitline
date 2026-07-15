@@ -12,6 +12,7 @@ import { Simulator } from './pages/Simulator';
 import { FAQ } from './pages/FAQ';
 import { Sources } from './pages/Sources';
 import { Contact } from './pages/Contact';
+import { QA } from './pages/QA';
 
 export default function App() {
   const getPageFromHash = () => {
@@ -76,6 +77,8 @@ export default function App() {
         return <Sources />;
       case 'contact':
         return <Contact />;
+      case 'qa':
+        return <QA />;
       default:
         return <Home navigateTo={navigateTo} />;
     }

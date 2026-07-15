@@ -1,0 +1,9 @@
+name = "pm-fitline-deepseek-proxy"
+main = "src/index.ts"
+compatibility_date = "2026-07-15"
+
+[vars]
+DEEPSEEK_API_BASE = "https://api.deepseek.com"
+DEEPSEEK_MODEL = "deepseek-chat"
+ALLOW_ORIGIN = "*"
+

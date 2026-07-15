@@ -44,6 +44,7 @@ export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
               <button onClick={() => handlePageClick('compare')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">对比指南</button>
               <button onClick={() => handlePageClick('plan')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">合作计划</button>
               <button onClick={() => handlePageClick('simulator')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">收益试算</button>
+              <button onClick={() => handlePageClick('qa')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">AI问答</button>
               <button onClick={() => handlePageClick('faq')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">常见问题</button>
               <button onClick={() => handlePageClick('sources')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">资料来源</button>
               <button onClick={() => handlePageClick('contact')} className="text-left hover:text-[#C5A35A] py-1 transition-colors">联系咨询</button>
