@@ -318,10 +318,10 @@ export const QA: React.FC = () => {
       <div className="border-b border-gray-100 pb-6 space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] flex items-center space-x-2">
           <Bot className="h-6 w-6 text-[#C5A35A]" />
-          <span>AI 问答</span>
+          <span>内容问答</span>
         </h1>
         <p className="text-sm text-gray-500 max-w-3xl">
-          本模块由 AI 生成内容，仅用于信息理解辅助，不构成任何收益承诺、产品功效承诺或官方解释。涉及政策与结算，请以官方最新书面文件与账户结算单为准。
+          本模块为自动生成的内容解读，仅用于信息理解辅助，不构成任何收益承诺、产品功效承诺或官方解释。涉及政策与结算，请以官方最新书面文件与账户结算单为准。
         </p>
       </div>
 
