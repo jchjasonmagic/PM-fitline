@@ -336,18 +336,6 @@ export const QA: React.FC = () => {
           <span className="hidden sm:inline">清空对话</span>
         </button>
 
-        {isSending && (
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px]" />
-            <div className="absolute left-1/2 top-24 -translate-x-1/2">
-              <div className="inline-flex items-center space-x-2 rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-[#12304A] shadow-md border border-gray-100">
-                <Loader2 className="h-4 w-4 animate-spin text-[#1F5D7A]" />
-                <span>正在生成回答…</span>
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="p-5 sm:p-6 space-y-4" id="qa-messages">
           {messages.map((m, idx) => {
             const isUser = m.role === 'user';
