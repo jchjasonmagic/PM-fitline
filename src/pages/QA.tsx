@@ -325,19 +325,16 @@ export const QA: React.FC = () => {
         </p>
       </div>
 
-      <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden" id="qa-chat-card">
-        <div className="p-5 sm:p-6 border-b border-gray-100 flex items-center justify-between">
-          <div />
-          <button
-            type="button"
-            id="btn-qa-clear"
-            onClick={handleClear}
-            className="inline-flex items-center space-x-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50"
-          >
-            <Trash2 className="h-4 w-4" />
-            <span>清空对话</span>
-          </button>
-        </div>
+      <div className="relative bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden" id="qa-chat-card">
+        <button
+          type="button"
+          id="btn-qa-clear"
+          onClick={handleClear}
+          className="absolute right-4 top-4 inline-flex items-center space-x-2 rounded-lg border border-gray-200 bg-white/95 px-3 py-2 text-xs font-medium text-gray-600 shadow-sm hover:bg-white"
+        >
+          <Trash2 className="h-4 w-4" />
+          <span className="hidden sm:inline">清空对话</span>
+        </button>
 
         <div className="p-5 sm:p-6 space-y-4" id="qa-messages">
           {messages.map((m, idx) => {
@@ -345,7 +342,7 @@ export const QA: React.FC = () => {
             return (
               <div
                 key={`${m.role}-${idx}`}
-                className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${isUser ? 'justify-end' : 'justify-start pr-16 sm:pr-0'}`}
               >
                 <div
                   className={`max-w-[92%] sm:max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
