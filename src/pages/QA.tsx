@@ -14,6 +14,232 @@ const buildApiUrl = (base: string | undefined) => {
   return `${raw.replace(/\/+$/, '')}/api/ask`;
 };
 
+type Block =
+  | { type: 'p'; lines: string[] }
+  | { type: 'ul'; items: string[] }
+  | { type: 'ol'; items: string[] }
+  | { type: 'h'; level: 1 | 2 | 3; text: string }
+  | { type: 'code'; lines: string[] };
+
+const parseMarkdownBlocks = (raw: string): Block[] => {
+  const text = (raw ?? '').replace(/\r\n/g, '\n');
+  const lines = text.split('\n');
+  const blocks: Block[] = [];
+
+  let inCode = false;
+  let codeLines: string[] = [];
+  let paraLines: string[] = [];
+  let ulItems: string[] = [];
+  let olItems: string[] = [];
+
+  const flushPara = () => {
+    if (paraLines.length) {
+      blocks.push({ type: 'p', lines: paraLines });
+      paraLines = [];
+    }
+  };
+  const flushUl = () => {
+    if (ulItems.length) {
+      blocks.push({ type: 'ul', items: ulItems });
+      ulItems = [];
+    }
+  };
+  const flushOl = () => {
+    if (olItems.length) {
+      blocks.push({ type: 'ol', items: olItems });
+      olItems = [];
+    }
+  };
+  const flushLists = () => {
+    flushUl();
+    flushOl();
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trimEnd();
+
+    if (trimmed.trim() === '```') {
+      flushPara();
+      flushLists();
+      if (!inCode) {
+        inCode = true;
+        codeLines = [];
+      } else {
+        inCode = false;
+        blocks.push({ type: 'code', lines: codeLines });
+        codeLines = [];
+      }
+      continue;
+    }
+
+    if (inCode) {
+      codeLines.push(line);
+      continue;
+    }
+
+    if (!trimmed.trim()) {
+      flushPara();
+      flushLists();
+      continue;
+    }
+
+    const heading = trimmed.match(/^(#{1,3})\s+(.+)$/);
+    if (heading) {
+      flushPara();
+      flushLists();
+      const level = heading[1].length as 1 | 2 | 3;
+      blocks.push({ type: 'h', level, text: heading[2] });
+      continue;
+    }
+
+    const ul = trimmed.match(/^\-\s+(.+)$/);
+    if (ul) {
+      flushPara();
+      flushOl();
+      ulItems.push(ul[1]);
+      continue;
+    }
+
+    const ol = trimmed.match(/^\d+\.\s+(.+)$/);
+    if (ol) {
+      flushPara();
+      flushUl();
+      olItems.push(ol[1]);
+      continue;
+    }
+
+    if (ulItems.length || olItems.length) {
+      if (ulItems.length) ulItems[ulItems.length - 1] = `${ulItems[ulItems.length - 1]}\n${trimmed.trim()}`;
+      if (olItems.length) olItems[olItems.length - 1] = `${olItems[olItems.length - 1]}\n${trimmed.trim()}`;
+      continue;
+    }
+
+    paraLines.push(trimmed);
+  }
+
+  if (inCode && codeLines.length) {
+    blocks.push({ type: 'code', lines: codeLines });
+  }
+
+  flushPara();
+  flushLists();
+  return blocks;
+};
+
+const renderInline = (text: string, keyPrefix: string) => {
+  const parts: React.ReactNode[] = [];
+  let rest = text ?? '';
+  let idx = 0;
+
+  while (rest.length) {
+    const bold = rest.match(/\*\*([^*]+?)\*\*/);
+    const code = rest.match(/`([^`]+?)`/);
+
+    const boldIndex = bold ? rest.indexOf(bold[0]) : -1;
+    const codeIndex = code ? rest.indexOf(code[0]) : -1;
+
+    const nextIndexCandidates = [boldIndex, codeIndex].filter((n) => n >= 0);
+    const nextIndex = nextIndexCandidates.length ? Math.min(...nextIndexCandidates) : -1;
+
+    if (nextIndex < 0) {
+      parts.push(rest);
+      break;
+    }
+
+    if (nextIndex > 0) {
+      parts.push(rest.slice(0, nextIndex));
+      rest = rest.slice(nextIndex);
+      continue;
+    }
+
+    if (bold && boldIndex === 0) {
+      parts.push(
+        <strong key={`${keyPrefix}-b-${idx++}`} className="font-semibold">
+          {bold[1]}
+        </strong>
+      );
+      rest = rest.slice(bold[0].length);
+      continue;
+    }
+
+    if (code && codeIndex === 0) {
+      parts.push(
+        <code
+          key={`${keyPrefix}-c-${idx++}`}
+          className="rounded bg-black/5 px-1 py-0.5 font-mono text-[12px]"
+        >
+          {code[1]}
+        </code>
+      );
+      rest = rest.slice(code[0].length);
+      continue;
+    }
+
+    parts.push(rest[0]);
+    rest = rest.slice(1);
+  }
+
+  return parts;
+};
+
+const renderMarkdown = (content: string, keyPrefix: string) => {
+  const blocks = parseMarkdownBlocks(content);
+  return (
+    <div className="space-y-2">
+      {blocks.map((b, i) => {
+        const k = `${keyPrefix}-blk-${i}`;
+        if (b.type === 'h') {
+          const cls =
+            b.level === 1
+              ? 'text-base font-bold'
+              : b.level === 2
+                ? 'text-sm font-bold'
+                : 'text-sm font-semibold';
+          return (
+            <div key={k} className={cls}>
+              {renderInline(b.text, k)}
+            </div>
+          );
+        }
+        if (b.type === 'ul') {
+          return (
+            <ul key={k} className="list-disc pl-5 space-y-1">
+              {b.items.map((it, j) => (
+                <li key={`${k}-li-${j}`} className="whitespace-pre-wrap">
+                  {renderInline(it, `${k}-li-${j}`)}
+                </li>
+              ))}
+            </ul>
+          );
+        }
+        if (b.type === 'ol') {
+          return (
+            <ol key={k} className="list-decimal pl-5 space-y-1">
+              {b.items.map((it, j) => (
+                <li key={`${k}-li-${j}`} className="whitespace-pre-wrap">
+                  {renderInline(it, `${k}-li-${j}`)}
+                </li>
+              ))}
+            </ol>
+          );
+        }
+        if (b.type === 'code') {
+          return (
+            <pre key={k} className="overflow-auto rounded-lg bg-black/80 p-3 text-[12px] text-white/90">
+              <code className="whitespace-pre">{b.lines.join('\n')}</code>
+            </pre>
+          );
+        }
+        return (
+          <p key={k} className="whitespace-pre-wrap">
+            {renderInline(b.lines.join('\n'), k)}
+          </p>
+        );
+      })}
+    </div>
+  );
+};
+
 export const QA: React.FC = () => {
   const apiUrl = useMemo(() => buildApiUrl(import.meta.env.VITE_QA_API_BASE), []);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -122,13 +348,13 @@ export const QA: React.FC = () => {
                 className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[92%] sm:max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+                  className={`max-w-[92%] sm:max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                     isUser
                       ? 'bg-[#1F5D7A] text-white'
                       : 'bg-gray-50 text-[#263238] border border-gray-100'
                   }`}
                 >
-                  {m.content}
+                  {renderMarkdown(m.content, `${m.role}-${idx}`)}
                 </div>
               </div>
             );
