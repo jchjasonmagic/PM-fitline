@@ -101,9 +101,7 @@ export const QA: React.FC = () => {
 
       <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden" id="qa-chat-card">
         <div className="p-5 sm:p-6 border-b border-gray-100 flex items-center justify-between">
-          <div className="text-sm text-gray-600">
-            接口：<span className="font-mono text-xs text-gray-500">{apiUrl}</span>
-          </div>
+          <div />
           <button
             type="button"
             id="btn-qa-clear"
@@ -176,4 +174,3 @@ export const QA: React.FC = () => {
     </div>
   );
 };
-
